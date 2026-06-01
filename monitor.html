@@ -900,6 +900,112 @@ let currentDigest = null;
 const INTERESTS_DEFAULT = ['LLMs & Chatbots', 'Automação & Agentes', 'IA Generativa', 'ROI & Business Cases'];
 const AUTO_REFRESH_MS = 60 * 60 * 1000; // 1 hour
 
+// ─── Seeded content (curadoria de referência) ───
+const SEEDED_DIGEST = {
+  seeded: true,
+  digest: "O ecossistema de agentes de IA em 2026 está sendo redefinido por dois vetores críticos: sistemas self-prompting via Claude Code Routines e harness engineering como diferencial competitivo real. O modelo é commodity — o scaffolding e o ambiente ao redor dele é o produto.",
+  highlight: "arXiv:2605.22166 — com modelo completamente congelado, 116 de 126 configurações melhoraram apenas com patches no harness. Ganho médio: +88,5% em 18 backbones distintos.",
+  items: [
+    {
+      id: "seed_001",
+      category: "Ferramentas",
+      title: "Claude Code Routines: Agentes que se Disparam Sozinhos",
+      summary: "Novo recurso da Anthropic transforma Claude de ferramenta reativa em agente proativo com triggers agendados (cron) ou baseados em eventos (GitHub PRs, webhooks). Usado internamente na Anthropic gerou +200% em PRs semanais de documentação — sem intervenção manual em nenhum ciclo.",
+      relevance: 10,
+      impact: "Alto",
+      source: "Anthropic Workshop Oficial",
+      url: "https://docs.anthropic.com/claude-code",
+      tags: ["Claude Code", "Routines", "Automação", "Agentes", "Proativo"],
+      action: "Instale/atualize o Claude Code e configure uma Routine com /schedule para a tarefa mais repetitiva do seu workflow esta semana."
+    },
+    {
+      id: "seed_002",
+      category: "Modelos",
+      title: "Pare de Promptar Claude — Construa Sistemas que se Auto-Promptam",
+      summary: "Engenheira da Anthropic (Applied AI) sintetiza o novo paradigma: 'You're not supposed to prompt Claude. You're supposed to build a system that prompts itself.' A maioria dos usuários opera ainda em modo chatbot, ignorando 80-90% do potencial disponível com Routines, plugins e memory management.",
+      relevance: 9,
+      impact: "Alto",
+      source: "Anthropic Applied AI Team",
+      url: null,
+      tags: ["Self-prompting", "Agentes", "Claude", "Paradigma", "Autonomia"],
+      action: "Mapeie 3 tarefas repetitivas do seu workflow e redesenhe-as como sistemas com trigger, contexto e steering — não como prompts manuais."
+    },
+    {
+      id: "seed_003",
+      category: "Aprendizado",
+      title: "28 Features do Claude Code Que Você Provavelmente Nunca Usou",
+      summary: "Plugins oficiais (TypeScript LSP, security, playwright, context), skills customizadas, CLAUDE.md como hot cache de contexto do projeto, TASKS.md para gestão de backlog, hooks de pre/post-tool, memory management profundo. A maioria dos usuários usa menos de 20% da superfície disponível.",
+      relevance: 8,
+      impact: "Médio",
+      source: "Anthropic Workshop / Claude Code Docs",
+      url: "https://docs.anthropic.com/claude-code",
+      tags: ["Claude Code", "Plugins", "CLAUDE.md", "Skills", "Hooks", "Memory"],
+      action: "Reserve 30 min para explorar plugins oficiais e escrever um CLAUDE.md completo para seu projeto principal — contexto persistente elimina repetição de prompts."
+    },
+    {
+      id: "seed_004",
+      category: "Pesquisa",
+      title: "arXiv:2605.22166 — +88,5% de Ganho em Agentes sem Tocar no Modelo",
+      summary: "Paper 'Adapting the Interface, Not the Model' (maio 2026): 116 de 126 configurações melhoraram apenas com patches no harness, com modelo completamente congelado. Ganho médio de 88,5% em 18 backbones. Conclusão: falhas de agentes vêm majoritariamente de mismatches na interface modelo-ambiente, não da capacidade do LLM.",
+      relevance: 10,
+      impact: "Alto",
+      source: "arXiv:2605.22166",
+      url: "https://arxiv.org/abs/2605.22166",
+      tags: ["Harness", "Agentes", "Pesquisa", "Benchmark", "τ-bench", "AgentBench"],
+      action: "Leia o paper e audite seu stack atual: quanto do esforço vai em fine-tuning/prompting vs. harness engineering? O paper sugere inverter a proporção."
+    },
+    {
+      id: "seed_005",
+      category: "Negócios",
+      title: "Frozen-Model Strategy: ROI Máximo de Agentes sem Fine-Tuning",
+      summary: "A evidência experimental de 2026 consolida o caminho: modelos menores + harness forte superam modelos grandes + harness fraco. Cursor, Claude Code e Perplexity nunca foram sobre o modelo — foram sobre o ambiente. Fine-tuning caro passa a ser último recurso, não primeira aposta.",
+      relevance: 9,
+      impact: "Alto",
+      source: "Rohit4verse / arXiv:2605.22166",
+      url: null,
+      tags: ["ROI", "Fine-tuning", "Harness", "Estratégia", "Agentes", "Enterprise"],
+      action: "Antes do próximo ciclo de fine-tuning, invista 80% do esforço em harness: tool schemas rigorosos, state management, eval loops e recovery policies."
+    },
+    {
+      id: "seed_006",
+      category: "Ferramentas",
+      title: "Template: 6 Camadas de um Harness Robusto para Produção",
+      summary: "Bootstrap/Init → Execution Loop (Propose → Validate → Sandbox Execute → Observe → Feedback) → Recovery Layer (retry, compaction, human gates) → Memory Layer (short/medium/long-term) → Monitoring (trajectories, cost, anomalias) → Adaptation Layer (patches automáticos via post-mortems). Transfere entre modelos sem re-treinamento.",
+      relevance: 9,
+      impact: "Alto",
+      source: "Harness Engineering Framework 2026",
+      url: null,
+      tags: ["Harness", "Template", "Arquitetura", "Produção", "Recovery", "Memory"],
+      action: "Use este template como checklist: sua stack tem todas as 6 camadas? Identifique a mais fraca e fortaleça esta sprint."
+    },
+    {
+      id: "seed_007",
+      category: "Pesquisa",
+      title: "Life-Harness: Adaptação Dinâmica de Runtime Baseada em Falhas Reais",
+      summary: "O conceito Life-Harness do arXiv:2605.22166 coleta falhas recorrentes em operação e converte automaticamente em intervenções reutilizáveis — melhores tool descriptions, recovery policies, retry rules. O harness evolui com o uso sem re-treinar o modelo. Testado nos benchmarks τ-bench, τ²-bench e AgentBench.",
+      relevance: 8,
+      impact: "Alto",
+      source: "arXiv:2605.22166 / Life-Harness",
+      url: "https://arxiv.org/abs/2605.22166",
+      tags: ["Life-Harness", "Runtime", "Adaptação", "Reliability", "Auto-healing"],
+      action: "Implemente logging estruturado de falhas no seu agente. Analise os padrões e converta em patches de harness — não em mudanças de prompt."
+    },
+    {
+      id: "seed_008",
+      category: "Negócios",
+      title: "Harness Engineering: O Novo Moat de Produtos com IA Agêntica",
+      summary: "Em 2026, modelos são commodities cada vez mais intercambiáveis. O diferencial de Cursor, Claude Code e Perplexity está no harness — não no backbone. Vantagens para empresas que investem nisso: menor custo (sem fine-tuning), melhor confiabilidade, compliance enterprise facilitado e troca de modelo sem reescrever o produto.",
+      relevance: 9,
+      impact: "Alto",
+      source: "The Harness Is Everything — Rohit4verse (1.3M+ views)",
+      url: null,
+      tags: ["Moat", "Competitividade", "Harness", "Produto", "Enterprise", "Agentic"],
+      action: "Mapeie onde seu produto/workflow usa o LLM como caixa-preta sem scaffolding. Esses são os pontos onde concorrentes podem te ultrapassar com harness superior."
+    }
+  ],
+  next_watch: "Acompanhe releases de triggers via webhook nas Claude Code Routines, novos plugins oficiais Anthropic, e replicações independentes do paper arXiv:2605.22166 nos benchmarks τ-bench e AgentBench."
+};
+
 // ─── Init ───
 window.addEventListener('load', () => {
   loadFromStorage();
@@ -913,7 +1019,11 @@ window.addEventListener('load', () => {
     document.getElementById('profile-screen').style.display = 'none';
     applyProfile();
   }
-  showEmptyState();
+  if (allItems.length > 0 && profile) {
+    showDigest();
+  } else if (!profile) {
+    showEmptyState();
+  }
 });
 
 function loadFromStorage() {
@@ -933,6 +1043,11 @@ function loadFromStorage() {
       allItems = currentDigest.items || [];
     }
   } catch(e) {}
+  // Fall back to seeded curadoria if no cached digest
+  if (!currentDigest) {
+    currentDigest = { ...SEEDED_DIGEST, fetchedAt: new Date().toISOString() };
+    allItems = currentDigest.items;
+  }
 }
 
 function saveToStorage() {
@@ -1104,18 +1219,27 @@ Distribua equilibradamente entre as 5 categorias.`;
 }
 
 function buildSystemPrompt() {
-  return `Você é o MONITOR DE IA — agente especializado em curadoria estratégica de inteligência artificial.
+  return `Você é o MONITOR DE IA — agente especializado em curadoria estratégica de inteligência artificial para profissionais de alto desempenho.
 
-Sua missão: gerar digests de IA precisos, relevantes e acionáveis para profissionais de alto desempenho.
+Sua missão: gerar digests de IA precisos, relevantes e acionáveis — com dados reais, fontes verificáveis e ações concretas.
 
-Princípios:
-- Priorize impacto prático sobre novidade superficial
-- Inclua dados concretos (percentuais, benchmarks, custos) quando disponível
-- Cada item deve ter uma ação clara e realizável
-- Mantenha equilíbrio entre categorias: Modelos, Ferramentas, Pesquisa, Negócios, Aprendizado
-- Adapte linguagem e profundidade ao nível do usuário
-- Foque em desenvolvimentos com relevância durável, não hype passageiro
-- Inclua fontes reais e verificáveis (Anthropic Blog, arXiv, GitHub, Papers With Code, etc.)
+PRIORIDADES TEMÁTICAS (2025-2026):
+- Harness engineering: scaffolding, runtime environments, tool schemas, recovery layers, state management. O harness é o novo moat — não o modelo. Ref: arXiv:2605.22166 (+88,5% de ganho médio com modelo congelado).
+- Agentes autônomos e self-prompting: Routines, triggers event-based, sistemas que se auto-disparam. Claude Code Routines, hooks, CLAUDE.md, TASKS.md, plugins.
+- Infraestrutura agentic: orquestração de sub-agentes, long-running sessions, compaction de contexto, memory management, observabilidade de trajetórias.
+- Estratégia frozen-model: maximizar ROI sem fine-tuning — investir em harness antes de trocar/fine-tunar o modelo.
+- Novos modelos e benchmarks: releases de Anthropic, OpenAI, Google DeepMind, Meta AI, Mistral — com dados reais de performance e custo.
+- Aplicações enterprise e ROI: automação de workflows, cases com métricas reais (tempo economizado, throughput, custo por task).
+- Pesquisa aplicada: papers arXiv com resultados concretos e reproduzíveis — não apenas teóricos.
+- Ferramentas e ecossistema: Claude Code, Cursor, LangGraph, CrewAI, AutoGen, MCP servers, e stacks custom.
+
+PRINCÍPIOS DE CURADORIA:
+- Priorize impacto prático durável sobre novidade superficial e hype
+- Inclua dados quantitativos (%, benchmarks, custos, throughput) sempre que disponível
+- Cada item precisa de uma ação concreta e realizável — não genérica
+- Distribua equilibradamente pelas 5 categorias: Modelos, Ferramentas, Pesquisa, Negócios, Aprendizado
+- Adapte profundidade técnica ao nível do usuário
+- Cite fontes reais e verificáveis: Anthropic Blog, arXiv, GitHub, Papers With Code, X/Twitter de pesquisadores, docs oficiais
 
 Responda SEMPRE em JSON válido, sem texto fora do JSON.`;
 }
@@ -1145,7 +1269,10 @@ function showDigest() {
   document.getElementById('digest-highlight').textContent = currentDigest.highlight || '';
 
   const fetched = currentDigest.fetchedAt ? new Date(currentDigest.fetchedAt) : new Date();
-  document.getElementById('digest-date').textContent = `Atualizado: ${fetched.toLocaleString('pt-BR')}`;
+  const seededLabel = currentDigest.seeded
+    ? ' · <span style="color:var(--cat-research);letter-spacing:0.08em;font-size:10px;text-transform:uppercase;border:1px solid rgba(255,200,48,0.4);padding:1px 6px;border-radius:1px;background:rgba(255,200,48,0.08);">Curadoria de Referência</span> <span style="color:var(--text-dim);font-size:10px">Clique em Monitorar para atualizar com seu perfil</span>'
+    : '';
+  document.getElementById('digest-date').innerHTML = `Carregado: ${fetched.toLocaleString('pt-BR')}${seededLabel}`;
 
   if (currentDigest.next_watch) {
     nw.style.display = 'flex';
@@ -1370,11 +1497,7 @@ function escHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-// ─── Handle discuss param (from cards linking to index.html) ───
-// Restore last digest on load if available
-window.addEventListener('load', () => {
-  if (allItems.length > 0 && profile) showDigest();
-});
+// Digest date uses innerHTML for seeded badge, so escaping is handled inline above.
 </script>
 
 </body>

@@ -461,6 +461,7 @@ background: rgba(42,255,176,0.06);
       <div class="status-dot"></div>
       ONLINE
     </div>
+    <a href="monitor.html" style="font-size:11px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;padding:5px 12px;border:1px solid var(--border);border-radius:2px;color:var(--text-dim);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)';this.style.color='var(--accent-green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-dim)'">📡 MONITOR</a>
     <button id="clearKeyBtn" onclick="clearKey()" title="Trocar API Key">🔑 KEY</button>
   </div>
 </header>
@@ -558,6 +559,22 @@ window.addEventListener('load', () => {
 });
 
 function launchApp() {
+  const params = new URLSearchParams(window.location.search);
+  const discussParam = params.get('discuss');
+  if (discussParam) {
+    try {
+      const item = JSON.parse(decodeURIComponent(discussParam));
+      const prompt = `[Monitor de IA] Quero discutir este item:\n\nCategoria: ${item.category}\nTítulo: ${item.title}\nResumo: ${item.summary}\nAção sugerida: ${item.action}`;
+      setTimeout(() => {
+        addMessage('bot', `[OBSERVE] Item do Monitor de IA recebido.\n\nCategoria: ${item.category} | "${item.title}"\n\n[ORIENT] Analisando contexto estratégico para você.\n\n[ACT] ⟶ O que especificamente você quer explorar sobre este tópico?`);
+        document.getElementById('userInput').value = prompt;
+        document.getElementById('userInput').focus();
+      }, 400);
+    } catch(e) {}
+    history.replaceState({}, '', 'index.html');
+    return;
+  }
+
   setTimeout(() => {
     addMessage('bot', `[OBSERVE] Sistema online. Ciclo OODA iniciado.
 

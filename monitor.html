@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Monitor de IA">
+<meta name="theme-color" content="#060a0e">
+<title>Monitor de IA — Kai Boyd</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #060a0e;
+    --surface: #0e1620;
+    --border: #243040;
+    --accent-blue: #38d4ff;
+    --accent-green: #2affb0;
+    --accent-dim: #0a2535;
+    --text: #e8f4fc;
+    --text-dim: #7a9ab0;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --cat-models: #38d4ff;
+    --cat-models-bg: rgba(56,212,255,0.1);
+    --cat-tools: #2affb0;
+    --cat-tools-bg: rgba(42,255,176,0.1);
+    --cat-research: #ffc830;
+    --cat-research-bg: rgba(255,200,48,0.1);
+    --cat-business: #ff7878;
+    --cat-business-bg: rgba(255,120,120,0.1);
+    --cat-learning: #bf94ff;
+    --cat-learning-bg: rgba(191,148,255,0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.012) 2px, rgba(0,200,255,0.012) 4px);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ─── Header ─── */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .logo-icon {
+    width: 40px; height: 40px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, #0a2535, #001a28);
+    border: 1.5px solid var(--accent-green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 0 14px rgba(42,255,176,0.3);
+    position: relative;
+  }
+
+  .logo-icon::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 2px;
+    border: 1px solid rgba(42,255,176,0.15);
+    animation: pulse-sq 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-sq {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.08); opacity: 0; }
+  }
+
+  .header-info h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+
+  .header-info .subtitle {
+    font-size: 11px;
+    color: var(--accent-green);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-icon {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 6px 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .btn-icon:hover {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    background: rgba(56,212,255,0.06);
+  }
+
+  .btn-primary {
+    background: var(--accent-green);
+    border: none;
+    color: #000;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 7px 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary:hover { background: #fff; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 6px var(--accent-green);
+    animation: blink 1.8s ease-in-out infinite;
+  }
+
+  .status-dot.idle { background: var(--text-dim); box-shadow: none; animation: none; }
+  .status-dot.loading { background: var(--accent-blue); box-shadow: 0 0 6px var(--accent-blue); }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ─── Digest Banner ─── */
+  #digest-banner {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: none;
+  }
+
+  .digest-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    margin-bottom: 6px;
+  }
+
+  .digest-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .digest-highlight {
+    font-size: 12px;
+    color: var(--accent-blue);
+    margin-top: 8px;
+    padding: 6px 12px;
+    border-left: 2px solid var(--accent-blue);
+    background: rgba(56,212,255,0.06);
+  }
+
+  .digest-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* ─── Filter bar ─── */
+  #filter-bar {
+    display: flex;
+    gap: 6px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: none;
+    align-items: center;
+  }
+
+  #filter-bar::-webkit-scrollbar { display: none; }
+
+  .filter-pill {
+    flex-shrink: 0;
+    padding: 5px 14px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    background: transparent;
+    font-family: var(--font-mono);
+  }
+
+  .filter-pill:hover { border-color: var(--text-dim); color: var(--text); }
+  .filter-pill.active { border-color: var(--accent-green); color: var(--accent-green); background: rgba(42,255,176,0.06); }
+
+  .filter-pill[data-cat="Modelos"].active { border-color: var(--cat-models); color: var(--cat-models); background: var(--cat-models-bg); }
+  .filter-pill[data-cat="Ferramentas"].active { border-color: var(--cat-tools); color: var(--cat-tools); background: var(--cat-tools-bg); }
+  .filter-pill[data-cat="Pesquisa"].active { border-color: var(--cat-research); color: var(--cat-research); background: var(--cat-research-bg); }
+  .filter-pill[data-cat="Negócios"].active { border-color: var(--cat-business); color: var(--cat-business); background: var(--cat-business-bg); }
+  .filter-pill[data-cat="Aprendizado"].active { border-color: var(--cat-learning); color: var(--cat-learning); background: var(--cat-learning-bg); }
+
+  .filter-sep { width: 1px; background: var(--border); height: 20px; flex-shrink: 0; }
+
+  .sort-select {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: 5px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    outline: none;
+    flex-shrink: 0;
+  }
+
+  .sort-select option { background: var(--surface); }
+
+  .item-count {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: auto;
+    flex-shrink: 0;
+    letter-spacing: 0.06em;
+  }
+
+  /* ─── Content area ─── */
+  #content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  #cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: 600px) {
+    #cards-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ─── Card ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeUp 0.3s ease;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .card[data-cat="Modelos"]::before { background: var(--cat-models); }
+  .card[data-cat="Ferramentas"]::before { background: var(--cat-tools); }
+  .card[data-cat="Pesquisa"]::before { background: var(--cat-research); }
+  .card[data-cat="Negócios"]::before { background: var(--cat-business); }
+  .card[data-cat="Aprendizado"]::before { background: var(--cat-learning); }
+
+  .card:hover { border-color: rgba(56,212,255,0.3); }
+  .card.saved { border-color: rgba(42,255,176,0.4); }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .cat-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 1px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: 1px solid;
+    flex-shrink: 0;
+  }
+
+  .cat-badge[data-cat="Modelos"] { color: var(--cat-models); border-color: rgba(56,212,255,0.4); background: var(--cat-models-bg); }
+  .cat-badge[data-cat="Ferramentas"] { color: var(--cat-tools); border-color: rgba(42,255,176,0.4); background: var(--cat-tools-bg); }
+  .cat-badge[data-cat="Pesquisa"] { color: var(--cat-research); border-color: rgba(255,200,48,0.4); background: var(--cat-research-bg); }
+  .cat-badge[data-cat="Negócios"] { color: var(--cat-business); border-color: rgba(255,120,120,0.4); background: var(--cat-business-bg); }
+  .cat-badge[data-cat="Aprendizado"] { color: var(--cat-learning); border-color: rgba(191,148,255,0.4); background: var(--cat-learning-bg); }
+
+  .impact-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 1px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .impact-badge.Alto { background: rgba(255,120,120,0.15); color: #ff7878; border: 1px solid rgba(255,120,120,0.3); }
+  .impact-badge.Médio { background: rgba(255,200,48,0.12); color: #ffc830; border: 1px solid rgba(255,200,48,0.3); }
+  .impact-badge.Baixo { background: rgba(122,154,176,0.12); color: var(--text-dim); border: 1px solid rgba(122,154,176,0.2); }
+
+  .relevance-score {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .rel-bar {
+    width: 48px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .rel-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent-green);
+    transition: width 0.5s ease;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  .card-summary {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.7;
+    opacity: 0.85;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 1px;
+    background: rgba(36,48,64,0.8);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  .card-action {
+    font-size: 12px;
+    color: var(--accent-green);
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    line-height: 1.5;
+  }
+
+  .card-action::before {
+    content: '⟶ ';
+    font-weight: 600;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .card-source {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    flex: 1;
+  }
+
+  .card-source a {
+    color: var(--accent-blue);
+    text-decoration: none;
+  }
+
+  .card-source a:hover { text-decoration: underline; }
+
+  .btn-save {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 4px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .btn-save:hover, .card.saved .btn-save {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    background: rgba(42,255,176,0.06);
+  }
+
+  .btn-discuss {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid rgba(56,212,255,0.4);
+    color: var(--accent-blue);
+    padding: 4px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    transition: all 0.2s;
+    flex-shrink: 0;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-discuss:hover { background: rgba(56,212,255,0.08); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Empty / Loading states ─── */
+  #empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+    display: none;
+    grid-column: 1 / -1;
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+  .empty-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .empty-sub { font-size: 13px; line-height: 1.6; }
+
+  #loading-state {
+    text-align: center;
+    padding: 60px 20px;
+    display: none;
+    grid-column: 1 / -1;
+  }
+
+  .scanner {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .loading-step {
+    font-size: 11px;
+    color: var(--accent-green);
+    margin-top: 8px;
+    animation: fadeUp 0.5s ease;
+  }
+
+  /* ─── Profile overlay ─── */
+  #profile-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 24px;
+    overflow-y: auto;
+  }
+
+  .profile-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent-green);
+    padding: 36px 32px;
+    max-width: 520px;
+    width: 100%;
+  }
+
+  .profile-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .profile-logo .pl-icon {
+    width: 44px; height: 44px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, #0a2535, #001a28);
+    border: 1.5px solid var(--accent-green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 0 14px rgba(42,255,176,0.25);
+  }
+
+  .profile-logo h2 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 20px;
+    color: #fff;
+  }
+
+  .profile-logo .pl-sub {
+    font-size: 11px;
+    color: var(--accent-green);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .profile-box p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .form-section { margin-bottom: 22px; }
+
+  .form-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .option-grid {
+    display: grid;
+    gap: 6px;
+  }
+
+  .option-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .option-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .option-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    letter-spacing: 0.04em;
+  }
+
+  .option-btn:hover { border-color: var(--accent-green); color: var(--text); }
+  .option-btn.selected { border-color: var(--accent-green); color: var(--accent-green); background: rgba(42,255,176,0.08); }
+
+  .interest-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .interest-chip {
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+
+  .interest-chip:hover { border-color: var(--accent-green); color: var(--text); }
+  .interest-chip.selected { border-color: var(--accent-green); color: var(--accent-green); background: rgba(42,255,176,0.08); }
+
+  .btn-start {
+    width: 100%;
+    background: var(--accent-green);
+    border: none;
+    color: #000;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 13px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .btn-start:hover { background: #fff; }
+
+  /* ─── Auto-refresh banner ─── */
+  #refresh-bar {
+    background: rgba(42,255,176,0.06);
+    border-bottom: 1px solid rgba(42,255,176,0.2);
+    padding: 8px 20px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--accent-green);
+    letter-spacing: 0.06em;
+  }
+
+  #refresh-bar .rb-text { flex: 1; }
+
+  /* ─── Toast ─── */
+  #toast {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom) + 20px);
+    right: 20px;
+    background: var(--surface);
+    border: 1px solid var(--accent-green);
+    border-left: 3px solid var(--accent-green);
+    color: var(--accent-green);
+    font-size: 12px;
+    padding: 10px 16px;
+    border-radius: 2px;
+    z-index: 300;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    letter-spacing: 0.06em;
+  }
+
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ─── Next watch bar ─── */
+  #next-watch {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 10px 20px;
+    font-size: 12px;
+    color: var(--text-dim);
+    display: none;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  #next-watch strong { color: var(--accent-blue); }
+
+  /* ─── Scrollbar ─── */
+  #content::-webkit-scrollbar { width: 4px; }
+  #content::-webkit-scrollbar-track { background: transparent; }
+  #content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Profile Setup Screen -->
+<div id="profile-screen">
+  <div class="profile-box">
+    <div class="profile-logo">
+      <div class="pl-icon">📡</div>
+      <div>
+        <h2>MONITOR DE IA</h2>
+        <div class="pl-sub">Curadoria Inteligente · Kai Boyd</div>
+      </div>
+    </div>
+    <p>Configure seu perfil para receber o digest de IA mais relevante para seu contexto. O agente filtra e prioriza conteúdo baseado nas suas características.</p>
+
+    <div class="form-section">
+      <span class="form-label">Sua função principal</span>
+      <div class="option-grid cols-2" id="role-grid">
+        <button class="option-btn" data-val="Empreendedor/Fundador" onclick="selectOption(this,'role')">Empreendedor / Fundador</button>
+        <button class="option-btn" data-val="Executivo/C-Level" onclick="selectOption(this,'role')">Executivo / C-Level</button>
+        <button class="option-btn" data-val="Desenvolvedor/Técnico" onclick="selectOption(this,'role')">Desenvolvedor / Técnico</button>
+        <button class="option-btn" data-val="Consultor/Estrategista" onclick="selectOption(this,'role')">Consultor / Estrategista</button>
+        <button class="option-btn" data-val="Gestor de Produto" onclick="selectOption(this,'role')">Gestor de Produto</button>
+        <button class="option-btn" data-val="Estudante/Pesquisador" onclick="selectOption(this,'role')">Estudante / Pesquisador</button>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <span class="form-label">Nível de experiência com IA</span>
+      <div class="option-grid cols-3" id="level-grid">
+        <button class="option-btn" data-val="Iniciante" onclick="selectOption(this,'level')">Iniciante</button>
+        <button class="option-btn" data-val="Intermediário" onclick="selectOption(this,'level')">Intermediário</button>
+        <button class="option-btn" data-val="Avançado" onclick="selectOption(this,'level')">Avançado</button>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <span class="form-label">Áreas de interesse (selecione todas que se aplicam)</span>
+      <div class="interest-grid" id="interests-grid">
+        <button class="interest-chip" onclick="toggleInterest(this)">LLMs & Chatbots</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Automação & Agentes</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">IA Generativa</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Visão Computacional</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Análise de Dados</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Voz & Áudio</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Coding com IA</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">ROI & Business Cases</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Ética & Regulação</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Infraestrutura & MLOps</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Pesquisa Acadêmica</button>
+        <button class="interest-chip" onclick="toggleInterest(this)">Startups de IA</button>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="saveProfile()">ATIVAR MONITOR DE IA →</button>
+  </div>
+</div>
+
+<!-- Main App -->
+<header>
+  <div class="logo-icon">📡</div>
+  <div class="header-info">
+    <h1>MONITOR DE IA</h1>
+    <div class="subtitle">Digest Estratégico · <span id="header-profile-label">Curadoria Personalizada</span></div>
+  </div>
+  <div class="header-actions">
+    <div class="status-dot idle" id="status-dot"></div>
+    <button class="btn-icon" onclick="openProfile()" title="Editar perfil">⚙ PERFIL</button>
+    <button class="btn-icon" id="auto-refresh-btn" onclick="toggleAutoRefresh()" title="Auto-refresh">⟳ AUTO</button>
+    <button class="btn-primary" id="refresh-btn" onclick="fetchContent()">⟳ MONITORAR</button>
+    <a class="btn-icon" href="index.html" title="Ir para Kai Boyd">↗ KAI BOYD</a>
+  </div>
+</header>
+
+<div id="digest-banner">
+  <div class="digest-label">📊 Digest de IA</div>
+  <div class="digest-text" id="digest-text"></div>
+  <div class="digest-highlight" id="digest-highlight"></div>
+  <div class="digest-meta">
+    <span id="digest-date"></span>
+    <span id="digest-count"></span>
+    <button class="btn-icon" style="font-size:10px;padding:3px 8px;" onclick="exportDigest()">↓ EXPORTAR</button>
+  </div>
+</div>
+
+<div id="refresh-bar">
+  <span class="rb-text">⟳ Auto-refresh ativo — próxima atualização em <span id="countdown">--:--</span></span>
+  <button class="btn-icon" style="font-size:10px;padding:3px 8px;" onclick="toggleAutoRefresh()">PAUSAR</button>
+</div>
+
+<div id="filter-bar">
+  <button class="filter-pill active" data-cat="Todos" onclick="setFilter(this)">Todos</button>
+  <button class="filter-pill" data-cat="Modelos" onclick="setFilter(this)">Modelos</button>
+  <button class="filter-pill" data-cat="Ferramentas" onclick="setFilter(this)">Ferramentas</button>
+  <button class="filter-pill" data-cat="Pesquisa" onclick="setFilter(this)">Pesquisa</button>
+  <button class="filter-pill" data-cat="Negócios" onclick="setFilter(this)">Negócios</button>
+  <button class="filter-pill" data-cat="Aprendizado" onclick="setFilter(this)">Aprendizado</button>
+  <div class="filter-sep"></div>
+  <select class="sort-select" id="sort-select" onchange="renderCards()">
+    <option value="relevance">Por Relevância</option>
+    <option value="impact">Por Impacto</option>
+    <option value="category">Por Categoria</option>
+  </select>
+  <span class="item-count" id="item-count"></span>
+</div>
+
+<div id="content">
+  <div id="cards-grid">
+    <div id="empty-state">
+      <div class="empty-icon">📡</div>
+      <div class="empty-title">Agente em standby</div>
+      <div class="empty-sub">Clique em <strong>⟳ MONITORAR</strong> para gerar seu digest<br>personalizado de conteúdo de IA.</div>
+    </div>
+    <div id="loading-state">
+      <div class="scanner"></div>
+      <div class="loading-text">ESCANEANDO PANORAMA DE IA...</div>
+      <div class="loading-step" id="loading-step">Inicializando agente monitor</div>
+    </div>
+  </div>
+</div>
+
+<div id="next-watch">
+  <strong>▲ PRÓXIMO MONITORAMENTO:</strong>
+  <span id="next-watch-text"></span>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API_URL = 'https://api.anthropic.com/v1/messages';
+let API_KEY = '';
+let profile = null;
+let allItems = [];
+let savedIds = new Set();
+let currentFilter = 'Todos';
+let autoRefreshInterval = null;
+let autoRefreshSeconds = 0;
+let countdownTimer = null;
+let currentDigest = null;
+
+const INTERESTS_DEFAULT = ['LLMs & Chatbots', 'Automação & Agentes', 'IA Generativa', 'ROI & Business Cases'];
+const AUTO_REFRESH_MS = 60 * 60 * 1000; // 1 hour
+
+// ─── Init ───
+window.addEventListener('load', () => {
+  loadFromStorage();
+  if (!API_KEY) {
+    window.location.href = 'index.html';
+    return;
+  }
+  if (!profile) {
+    document.getElementById('profile-screen').style.display = 'flex';
+  } else {
+    document.getElementById('profile-screen').style.display = 'none';
+    applyProfile();
+  }
+  showEmptyState();
+});
+
+function loadFromStorage() {
+  try { API_KEY = localStorage.getItem('kb_api_key') || ''; } catch(e) {}
+  try {
+    const p = localStorage.getItem('kb_monitor_profile');
+    if (p) profile = JSON.parse(p);
+  } catch(e) {}
+  try {
+    const s = localStorage.getItem('kb_monitor_saved');
+    if (s) savedIds = new Set(JSON.parse(s));
+  } catch(e) {}
+  try {
+    const d = localStorage.getItem('kb_monitor_last_digest');
+    if (d) {
+      currentDigest = JSON.parse(d);
+      allItems = currentDigest.items || [];
+    }
+  } catch(e) {}
+}
+
+function saveToStorage() {
+  try { localStorage.setItem('kb_monitor_profile', JSON.stringify(profile)); } catch(e) {}
+  try { localStorage.setItem('kb_monitor_saved', JSON.stringify([...savedIds])); } catch(e) {}
+}
+
+// ─── Profile ───
+let profileSelections = { role: '', level: '' };
+
+function selectOption(btn, field) {
+  const grid = btn.parentElement;
+  grid.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  profileSelections[field] = btn.dataset.val;
+}
+
+function toggleInterest(chip) {
+  chip.classList.toggle('selected');
+}
+
+function saveProfile() {
+  const role = profileSelections.role;
+  const level = profileSelections.level;
+  if (!role) { showToast('Selecione sua função'); return; }
+  if (!level) { showToast('Selecione seu nível'); return; }
+  const interests = [...document.querySelectorAll('#interests-grid .interest-chip.selected')]
+    .map(c => c.textContent);
+  if (interests.length === 0) { showToast('Selecione ao menos um interesse'); return; }
+  profile = { role, level, interests };
+  saveToStorage();
+  document.getElementById('profile-screen').style.display = 'none';
+  applyProfile();
+  if (allItems.length === 0) fetchContent();
+  else showDigest();
+}
+
+function openProfile() {
+  document.getElementById('profile-screen').style.display = 'flex';
+  if (profile) {
+    profileSelections = { role: profile.role, level: profile.level };
+    document.querySelectorAll('#role-grid .option-btn').forEach(b => {
+      if (b.dataset.val === profile.role) b.classList.add('selected');
+    });
+    document.querySelectorAll('#level-grid .option-btn').forEach(b => {
+      if (b.dataset.val === profile.level) b.classList.add('selected');
+    });
+    document.querySelectorAll('#interests-grid .interest-chip').forEach(c => {
+      if (profile.interests.includes(c.textContent)) c.classList.add('selected');
+    });
+  }
+}
+
+function applyProfile() {
+  if (!profile) return;
+  document.getElementById('header-profile-label').textContent = profile.role;
+}
+
+// ─── Fetch Content ───
+const LOADING_STEPS = [
+  'Inicializando agente monitor',
+  'Analisando panorama global de IA',
+  'Filtrando conteúdo por relevância',
+  'Aplicando perfil personalizado',
+  'Priorizando por impacto estratégico',
+  'Compilando digest final'
+];
+
+async function fetchContent() {
+  if (!API_KEY) return;
+  if (!profile) { openProfile(); return; }
+
+  const btn = document.getElementById('refresh-btn');
+  const dot = document.getElementById('status-dot');
+  btn.disabled = true;
+  dot.className = 'status-dot loading';
+  showLoadingState();
+
+  let stepIdx = 0;
+  const stepInterval = setInterval(() => {
+    stepIdx = (stepIdx + 1) % LOADING_STEPS.length;
+    const el = document.getElementById('loading-step');
+    if (el) el.textContent = LOADING_STEPS[stepIdx];
+  }, 1800);
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const systemPrompt = buildSystemPrompt();
+  const userPrompt = `Gere um digest estratégico de IA para:
+- Função: ${profile.role}
+- Nível: ${profile.level}
+- Interesses: ${profile.interests.join(', ')}
+- Data de referência: ${dateStr}
+
+Retorne APENAS JSON válido (sem markdown, sem texto fora do JSON):
+
+{
+  "digest": "Panorama geral de IA em 2-3 frases estratégicas e densas",
+  "highlight": "O desenvolvimento mais impactante do momento em 1 frase direta",
+  "items": [
+    {
+      "id": "item_001",
+      "category": "Modelos",
+      "title": "Título direto e impactante (máx. 80 chars)",
+      "summary": "Resumo em 2-3 frases com contexto, dados e impacto prático",
+      "relevance": 9,
+      "impact": "Alto",
+      "source": "Nome da fonte ou organização",
+      "url": "URL real se conhecida com alta certeza, caso contrário null",
+      "tags": ["tag1", "tag2", "tag3"],
+      "action": "Ação concreta em 1 frase: o que o usuário deve fazer com essa informação"
+    }
+  ],
+  "next_watch": "O que monitorar nos próximos dias — 1 frase específica e acionável"
+}
+
+Categorias válidas: Modelos, Ferramentas, Pesquisa, Negócios, Aprendizado
+Impacto válido: Alto, Médio, Baixo
+Relevância: 1-10 (inteiro)
+
+Gere entre 14 e 18 itens de alta qualidade e variedade. Priorize impacto prático real.
+Inclua referências a modelos reais, empresas reais, ferramentas reais (Anthropic, OpenAI, Google DeepMind, Meta AI, Mistral, etc).
+Distribua equilibradamente entre as 5 categorias.`;
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4096,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    const data = await res.json();
+    clearInterval(stepInterval);
+
+    if (data.error) {
+      showError(`Erro da API: ${data.error.message}`);
+    } else {
+      const text = data.content?.[0]?.text || '';
+      const parsed = parseJSON(text);
+      if (!parsed) {
+        showError('Erro ao processar resposta. Tente novamente.');
+        return;
+      }
+      currentDigest = { ...parsed, fetchedAt: new Date().toISOString() };
+      allItems = currentDigest.items || [];
+      try { localStorage.setItem('kb_monitor_last_digest', JSON.stringify(currentDigest)); } catch(e) {}
+      showDigest();
+      showToast(`${allItems.length} itens carregados`);
+    }
+  } catch(err) {
+    clearInterval(stepInterval);
+    showError('Falha na conexão. Verifique sua internet.');
+  } finally {
+    btn.disabled = false;
+    dot.className = 'status-dot';
+    document.getElementById('loading-state').style.display = 'none';
+  }
+}
+
+function buildSystemPrompt() {
+  return `Você é o MONITOR DE IA — agente especializado em curadoria estratégica de inteligência artificial.
+
+Sua missão: gerar digests de IA precisos, relevantes e acionáveis para profissionais de alto desempenho.
+
+Princípios:
+- Priorize impacto prático sobre novidade superficial
+- Inclua dados concretos (percentuais, benchmarks, custos) quando disponível
+- Cada item deve ter uma ação clara e realizável
+- Mantenha equilíbrio entre categorias: Modelos, Ferramentas, Pesquisa, Negócios, Aprendizado
+- Adapte linguagem e profundidade ao nível do usuário
+- Foque em desenvolvimentos com relevância durável, não hype passageiro
+- Inclua fontes reais e verificáveis (Anthropic Blog, arXiv, GitHub, Papers With Code, etc.)
+
+Responda SEMPRE em JSON válido, sem texto fora do JSON.`;
+}
+
+function parseJSON(text) {
+  try {
+    let cleaned = text.trim();
+    const fenceMatch = cleaned.match(/```(?:json)?\n?([\s\S]*?)\n?```/);
+    if (fenceMatch) cleaned = fenceMatch[1].trim();
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (jsonMatch) cleaned = jsonMatch[0];
+    return JSON.parse(cleaned);
+  } catch(e) {
+    console.error('JSON parse error:', e);
+    return null;
+  }
+}
+
+// ─── Render ───
+function showDigest() {
+  if (!currentDigest) return;
+
+  const banner = document.getElementById('digest-banner');
+  const nw = document.getElementById('next-watch');
+  banner.style.display = 'block';
+  document.getElementById('digest-text').textContent = currentDigest.digest || '';
+  document.getElementById('digest-highlight').textContent = currentDigest.highlight || '';
+
+  const fetched = currentDigest.fetchedAt ? new Date(currentDigest.fetchedAt) : new Date();
+  document.getElementById('digest-date').textContent = `Atualizado: ${fetched.toLocaleString('pt-BR')}`;
+
+  if (currentDigest.next_watch) {
+    nw.style.display = 'flex';
+    document.getElementById('next-watch-text').textContent = currentDigest.next_watch;
+  }
+
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('cards-grid');
+  const sortVal = document.getElementById('sort-select').value;
+
+  let items = [...allItems];
+
+  if (currentFilter !== 'Todos') {
+    items = items.filter(i => i.category === currentFilter);
+  }
+
+  if (sortVal === 'relevance') {
+    items.sort((a, b) => (b.relevance || 0) - (a.relevance || 0));
+  } else if (sortVal === 'impact') {
+    const order = { 'Alto': 3, 'Médio': 2, 'Baixo': 1 };
+    items.sort((a, b) => (order[b.impact] || 0) - (order[a.impact] || 0));
+  } else {
+    const catOrder = ['Modelos', 'Ferramentas', 'Pesquisa', 'Negócios', 'Aprendizado'];
+    items.sort((a, b) => catOrder.indexOf(a.category) - catOrder.indexOf(b.category));
+  }
+
+  document.getElementById('item-count').textContent = `${items.length} item${items.length !== 1 ? 's' : ''}`;
+  document.getElementById('digest-count').textContent = `${allItems.length} itens totais`;
+
+  grid.innerHTML = '';
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('loading-state').style.display = 'none';
+
+  if (items.length === 0) {
+    const emp = document.getElementById('empty-state');
+    grid.appendChild(emp);
+    emp.style.display = 'block';
+    return;
+  }
+
+  items.forEach((item, idx) => {
+    const card = buildCard(item, idx);
+    grid.appendChild(card);
+  });
+}
+
+function buildCard(item, idx) {
+  const card = document.createElement('div');
+  card.className = 'card' + (savedIds.has(item.id) ? ' saved' : '');
+  card.dataset.cat = item.category || 'Modelos';
+  card.style.animationDelay = `${idx * 0.04}s`;
+
+  const relPct = ((item.relevance || 5) / 10 * 100).toFixed(0);
+  const tags = (item.tags || []).map(t => `<span class="tag">${escHtml(t)}</span>`).join('');
+  const sourceHtml = item.url
+    ? `<a href="${escHtml(item.url)}" target="_blank" rel="noopener">${escHtml(item.source || 'Fonte')}</a>`
+    : escHtml(item.source || 'N/A');
+
+  const discussUrl = `index.html?discuss=${encodeURIComponent(JSON.stringify({
+    title: item.title,
+    summary: item.summary,
+    category: item.category,
+    action: item.action
+  }))}`;
+
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="cat-badge" data-cat="${escHtml(item.category)}">${escHtml(item.category)}</span>
+      <span class="impact-badge ${escHtml(item.impact || 'Médio')}">${escHtml(item.impact || 'Médio')}</span>
+      <div class="relevance-score">
+        <div class="rel-bar"><div class="rel-fill" style="width:${relPct}%"></div></div>
+        ${item.relevance}/10
+      </div>
+    </div>
+    <div class="card-title">${escHtml(item.title)}</div>
+    <div class="card-summary">${escHtml(item.summary)}</div>
+    ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+    ${item.action ? `<div class="card-action">${escHtml(item.action)}</div>` : ''}
+    <div class="card-footer">
+      <div class="card-source">${sourceHtml}</div>
+      <button class="btn-save" onclick="toggleSave('${escHtml(item.id)}', this.closest('.card'))">${savedIds.has(item.id) ? '✓ SALVO' : '+ SALVAR'}</button>
+      <a class="btn-discuss" href="${discussUrl}">↗ KAI BOYD</a>
+    </div>`;
+
+  return card;
+}
+
+// ─── State helpers ───
+function showEmptyState() {
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = '';
+  document.getElementById('loading-state').style.display = 'none';
+  const emp = document.getElementById('empty-state');
+  grid.appendChild(emp);
+  emp.style.display = 'block';
+}
+
+function showLoadingState() {
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = '';
+  document.getElementById('empty-state').style.display = 'none';
+  const ls = document.getElementById('loading-state');
+  grid.appendChild(ls);
+  ls.style.display = 'block';
+  document.getElementById('loading-step').textContent = LOADING_STEPS[0];
+}
+
+function showError(msg) {
+  showEmptyState();
+  document.getElementById('empty-state').querySelector('.empty-title').textContent = 'Erro no Monitor';
+  document.getElementById('empty-state').querySelector('.empty-sub').innerHTML = msg + '<br><br><button class="btn-primary" onclick="fetchContent()" style="margin-top:8px">⟳ TENTAR NOVAMENTE</button>';
+  showToast(msg);
+}
+
+// ─── Filters ───
+function setFilter(btn) {
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.cat;
+  if (allItems.length > 0) renderCards();
+}
+
+// ─── Save ───
+function toggleSave(id, cardEl) {
+  if (savedIds.has(id)) {
+    savedIds.delete(id);
+    cardEl.classList.remove('saved');
+    cardEl.querySelector('.btn-save').textContent = '+ SALVAR';
+    showToast('Removido da lista');
+  } else {
+    savedIds.add(id);
+    cardEl.classList.add('saved');
+    cardEl.querySelector('.btn-save').textContent = '✓ SALVO';
+    showToast('Salvo na lista de leitura');
+  }
+  try { localStorage.setItem('kb_monitor_saved', JSON.stringify([...savedIds])); } catch(e) {}
+}
+
+// ─── Auto-refresh ───
+function toggleAutoRefresh() {
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval);
+    clearInterval(countdownTimer);
+    autoRefreshInterval = null;
+    document.getElementById('refresh-bar').style.display = 'none';
+    document.getElementById('auto-refresh-btn').style.borderColor = '';
+    document.getElementById('auto-refresh-btn').style.color = '';
+    showToast('Auto-refresh pausado');
+  } else {
+    autoRefreshSeconds = AUTO_REFRESH_MS / 1000;
+    document.getElementById('refresh-bar').style.display = 'flex';
+    document.getElementById('auto-refresh-btn').style.borderColor = 'var(--accent-green)';
+    document.getElementById('auto-refresh-btn').style.color = 'var(--accent-green)';
+    updateCountdown();
+    countdownTimer = setInterval(updateCountdown, 1000);
+    autoRefreshInterval = setInterval(() => {
+      fetchContent();
+      autoRefreshSeconds = AUTO_REFRESH_MS / 1000;
+    }, AUTO_REFRESH_MS);
+    showToast('Auto-refresh ativado — a cada 1h');
+  }
+}
+
+function updateCountdown() {
+  autoRefreshSeconds--;
+  const m = Math.floor(autoRefreshSeconds / 60).toString().padStart(2, '0');
+  const s = (autoRefreshSeconds % 60).toString().padStart(2, '0');
+  const el = document.getElementById('countdown');
+  if (el) el.textContent = `${m}:${s}`;
+}
+
+// ─── Export ───
+function exportDigest() {
+  if (!currentDigest) return;
+  const lines = [];
+  lines.push(`# Digest de IA — ${new Date(currentDigest.fetchedAt || Date.now()).toLocaleString('pt-BR')}`);
+  lines.push(`\n**Panorama:** ${currentDigest.digest}`);
+  lines.push(`\n**Destaque:** ${currentDigest.highlight}`);
+  lines.push('\n---\n');
+  (currentDigest.items || []).forEach(item => {
+    lines.push(`## [${item.category}] ${item.title}`);
+    lines.push(`**Relevância:** ${item.relevance}/10 | **Impacto:** ${item.impact}`);
+    lines.push(`\n${item.summary}`);
+    if (item.action) lines.push(`\n**Ação:** ${item.action}`);
+    if (item.source) lines.push(`\n**Fonte:** ${item.url ? `[${item.source}](${item.url})` : item.source}`);
+    if (item.tags?.length) lines.push(`\n**Tags:** ${item.tags.join(', ')}`);
+    lines.push('\n---\n');
+  });
+  if (currentDigest.next_watch) lines.push(`**Próximo monitoramento:** ${currentDigest.next_watch}`);
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `digest-ia-${new Date().toISOString().split('T')[0]}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Digest exportado como Markdown');
+}
+
+// ─── Toast ───
+let toastTimer = null;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ─── Utils ───
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ─── Handle discuss param (from cards linking to index.html) ───
+// Restore last digest on load if available
+window.addEventListener('load', () => {
+  if (allItems.length > 0 && profile) showDigest();
+});
+</script>
+
+</body>
+</html>

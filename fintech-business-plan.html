@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinOps Intelligence — Plano de Negócio Iterativo</title>
+  <style>
+    :root {
+      --brand: #1a3c5e;
+      --accent: #0077cc;
+      --gold: #e6a817;
+      --light: #f4f7fb;
+      --muted: #6b7280;
+      --danger: #c0392b;
+      --success: #27ae60;
+      --border: #dde3ee;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--light); color: #1e2a38; line-height: 1.7; }
+    header { background: linear-gradient(135deg, var(--brand) 0%, #0a2240 100%); color: #fff; padding: 3rem 2rem 2rem; text-align: center; }
+    header h1 { font-size: 2.4rem; letter-spacing: -0.5px; }
+    header .tagline { font-size: 1.15rem; margin-top: 0.5rem; color: #a8c8f0; }
+    header .meta { font-size: 0.85rem; color: #7aafd4; margin-top: 1rem; }
+    nav { background: var(--brand); position: sticky; top: 0; z-index: 100; display: flex; flex-wrap: wrap; gap: 0; justify-content: center; padding: 0.4rem 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    nav a { color: #a8c8f0; text-decoration: none; font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 4px; transition: background 0.2s; }
+    nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    main { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem 4rem; }
+    .cycle { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 2.5rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .cycle-header { background: var(--brand); color: #fff; padding: 1.2rem 1.8rem; display: flex; align-items: center; gap: 1rem; }
+    .cycle-num { background: var(--gold); color: #1a1a1a; font-weight: 800; font-size: 0.85rem; border-radius: 50%; width: 2.2rem; height: 2.2rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cycle-header h2 { font-size: 1.2rem; }
+    .cycle-header .method { font-size: 0.8rem; color: #a8c8f0; margin-top: 0.15rem; }
+    .cycle-body { padding: 1.8rem; }
+    h3 { color: var(--brand); font-size: 1rem; margin: 1.5rem 0 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82rem; }
+    h3:first-child { margin-top: 0; }
+    h4 { color: var(--accent); font-size: 0.95rem; margin: 1.2rem 0 0.4rem; }
+    p { margin-bottom: 0.8rem; color: #2d3748; }
+    ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+    li { margin-bottom: 0.4rem; color: #2d3748; }
+    .critique { background: #fff8e1; border-left: 4px solid var(--gold); padding: 1rem 1.2rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.2rem 0; }
+    .critique strong { color: #92600a; display: block; margin-bottom: 0.4rem; font-size: 0.82rem; text-transform: uppercase; }
+    .improvement { background: #e8f5e9; border-left: 4px solid var(--success); padding: 1rem 1.2rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.2rem 0; }
+    .improvement strong { color: #1b5e20; display: block; margin-bottom: 0.4rem; font-size: 0.82rem; text-transform: uppercase; }
+    .final-result { background: #e3f0ff; border-left: 4px solid var(--accent); padding: 1rem 1.2rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.2rem 0; }
+    .final-result strong { color: #003d7a; display: block; margin-bottom: 0.4rem; font-size: 0.82rem; text-transform: uppercase; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+    th { background: var(--brand); color: #fff; padding: 0.7rem 1rem; text-align: left; font-size: 0.8rem; }
+    td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:nth-child(even) td { background: #f9fafc; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-gold { background: #fef9c3; color: #713f12; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .canvas-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; margin: 1rem 0; }
+    .canvas-cell { background: #f0f4ff; border: 1px solid #c7d4f0; border-radius: 8px; padding: 0.8rem; }
+    .canvas-cell.wide { grid-column: span 2; }
+    .canvas-cell.full { grid-column: span 5; }
+    .canvas-cell h5 { color: var(--brand); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 0.5rem; }
+    .canvas-cell p, .canvas-cell li { font-size: 0.82rem; }
+    .okr-block { border: 1px solid var(--border); border-radius: 8px; margin: 0.8rem 0; overflow: hidden; }
+    .okr-objective { background: var(--brand); color: #fff; padding: 0.7rem 1rem; font-size: 0.9rem; font-weight: 600; }
+    .okr-kr { padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.85rem; }
+    .okr-kr:last-child { border-bottom: none; }
+    .okr-kr::before { content: "KR"; background: var(--accent); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.35rem; border-radius: 3px; margin-top: 0.1rem; flex-shrink: 0; }
+    .arch-diagram { background: #0f1f35; color: #e0f0ff; border-radius: var(--radius); padding: 1.5rem; font-family: monospace; font-size: 0.82rem; line-height: 1.8; overflow-x: auto; margin: 1rem 0; }
+    .arch-diagram .layer { color: var(--gold); }
+    .arch-diagram .arrow { color: #4fc3f7; }
+    .summary-box { background: linear-gradient(135deg, var(--brand), #0a2240); color: #fff; border-radius: var(--radius); padding: 2rem; margin: 2rem 0; }
+    .summary-box h2 { color: var(--gold); margin-bottom: 1rem; }
+    .summary-box p, .summary-box li { color: #c8dff5; }
+    .summary-box h3 { color: #7ec8f7; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0; }
+    .metric-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 1rem; text-align: center; }
+    .metric-card .value { font-size: 1.8rem; font-weight: 800; color: var(--gold); }
+    .metric-card .label { font-size: 0.78rem; color: #a8c8f0; margin-top: 0.2rem; }
+    @media (max-width: 768px) {
+      .canvas-grid { grid-template-columns: 1fr 1fr; }
+      .canvas-cell.wide, .canvas-cell.full { grid-column: span 2; }
+      .metric-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>FinOps Intelligence</h1>
+  <div class="tagline">Administração Financeira Total para Empresas — Do Operacional ao Executivo</div>
+  <div class="meta">Plano de Negócio Iterativo · 11 Ciclos · Metodologias: Kawasaki · Osterwalder · Christensen · Ulwick · Blank · Drucker · Senge · Deming · OKR · IA Generativa</div>
+</header>
+
+<nav>
+  <a href="#c1">Ciclo 1: Significado</a>
+  <a href="#c2">Ciclo 2: Proposta de Valor</a>
+  <a href="#c3">Ciclo 3: Canvas</a>
+  <a href="#c4">Ciclo 4: OKRs</a>
+  <a href="#c5">Ciclo 5: Drucker·Senge·Deming</a>
+  <a href="#c6">Ciclo 6: IA &amp; Agentes</a>
+  <a href="#c7">Ciclo 7: Tecnologia</a>
+  <a href="#c8">Ciclo 8: Mercado &amp; Clientes</a>
+  <a href="#c9">Ciclo 9: Operações</a>
+  <a href="#c10">Ciclo 10: Finanças &amp; Capital</a>
+  <a href="#c11">Ciclo 11: Síntese Final</a>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 1 — MAKE MEANING (Guy Kawasaki)
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c1">
+  <div class="cycle-header">
+    <div class="cycle-num">1</div>
+    <div>
+      <h2>Make Meaning — Por Que Existimos</h2>
+      <div class="method">Guy Kawasaki · Mantra · Propósito Central</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>O Problema que Corrigimos</h3>
+    <p>No Brasil, empresas de médio porte (R$ 5M–R$ 200M de receita) enfrentam uma lacuna crítica: não têm porte para contratar um time financeiro completo (CFO, controller, analistas, tesoureiro) mas sofrem complexidade suficiente para quebrarem por má gestão financeira. Segundo IBGE, 6 em 10 PMEs fecham antes de 5 anos — e cerca de 40% desses fechamentos têm causa financeira direta.</p>
+    <p>Gestores pagam caro por consultoria episódica, softwares genéricos e contadores que entregam BAS (balanço, DRE, DCTF) mas não inteligência de gestão. O resultado: fluxo de caixa imprevisível, custo financeiro elevado, decisões de investimento cegas e falta de linguagem para conversar com bancos, investidores e M&amp;A.</p>
+
+    <h3>Nosso Significado (Make Meaning)</h3>
+    <p>Kawasaki ensina que negócios duradouros começam com propósito de fazer o mundo melhor, não de ganhar dinheiro. Nosso significado:</p>
+    <ul>
+      <li><strong>Corrigir uma injustiça:</strong> acesso à inteligência financeira de elite deve ser democrático — não exclusivo de grandes corporações com times de dezenas de profissionais.</li>
+      <li><strong>Salvar empregos:</strong> cada empresa de médio porte que sobrevive por ter tomado melhores decisões financeiras preserva dezenas ou centenas de empregos.</li>
+      <li><strong>Elevar a qualidade de vida do empreendedor:</strong> um CFO-as-a-Service tira o fundador da trincheira financeira e devolve-lhe tempo para liderar.</li>
+    </ul>
+
+    <h3>Mantra (3 palavras)</h3>
+    <p style="font-size:1.5rem; font-weight:800; color:var(--brand); text-align:center; padding:1rem; background:#f0f4ff; border-radius:8px; margin:1rem 0;">
+      "Inteligência Financeira Acessível"
+    </p>
+
+    <h3>Teste dos 3 Tipos de Significado (Kawasaki)</h3>
+    <table>
+      <tr><th>Tipo</th><th>Pergunta</th><th>Nossa Resposta</th></tr>
+      <tr><td>Melhorar o mundo</td><td>A empresa sai de trás e o mundo fica melhor?</td><td>Sim — empresas mais saudáveis geram empregos, recolhem impostos, pagam fornecedores.</td></tr>
+      <tr><td>Elevar qualidade de vida</td><td>O cliente vive melhor com nosso produto?</td><td>Sim — o dono da empresa dorme melhor, toma decisões melhores, cresce mais.</td></tr>
+      <tr><td>Corrigir uma injustiça</td><td>Existe algo fundamentalmente errado que corrigimos?</td><td>Sim — acesso desigual à expertise financeira de CFO vs. porte da empresa.</td></tr>
+    </table>
+
+    <h3>Personas do Fundador de Significado</h3>
+    <ul>
+      <li><strong>Empreendedor com empresa de R$ 10M de receita</strong> que nunca teve um CFO e não sabe por que perde dinheiro mesmo faturando bem.</li>
+      <li><strong>Gestor de PE/VC</strong> que precisa de controle financeiro nas investidas sem montar time interno em cada uma.</li>
+      <li><strong>Herdeiro de empresa familiar</strong> que quer profissionalizar a gestão mas não sabe por onde começar.</li>
+    </ul>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 1</strong>
+      O significado está claro e emotivamente ressonante, mas ainda genérico. "Inteligência Financeira Acessível" pode ser dito por qualquer fintech ou consultoria. Falta especificidade sobre o modelo de entrega (AI-first) que nos diferencia estruturalmente. O mantra precisa incorporar o elemento de IA e o escopo total (operacional ao executivo).
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 1 v2</strong>
+      Refinamento do mantra: <strong>"Seu CFO de IA"</strong> — três palavras que capturam acesso (seu), inteligência generativa (IA) e nível executivo (CFO). Adicionado um quarto tipo de significado específico: <em>Criar uma nova categoria</em> — o CFO-as-a-Service potencializado por IA Generativa não existia; estamos criando um mercado, não competindo num existente.
+    </div>
+
+    <div class="final-result">
+      <strong>Resultado Consolidado — Ciclo 1</strong>
+      <strong>Empresa:</strong> FinOps Intelligence | <strong>Mantra:</strong> "Seu CFO de IA" | <strong>Missão:</strong> Democratizar acesso à gestão financeira de excelência, combinando agentes de IA com especialistas humanos, para que toda empresa de médio porte possa tomar decisões financeiras de nível de grande corporação.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 2 — PROPOSTA DE VALOR
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c2">
+  <div class="cycle-header">
+    <div class="cycle-num">2</div>
+    <div>
+      <h2>Proposta de Valor</h2>
+      <div class="method">Osterwalder · Clayton Christensen (Jobs-to-be-Done) · Tony Ulwick (Outcome-Driven Innovation)</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Jobs-to-be-Done (Christensen)</h3>
+    <p>O cliente não contrata "gestão financeira" — contrata <em>progresso</em> em situações específicas. Identificamos os Jobs principais:</p>
+
+    <h4>Job Funcional Principal</h4>
+    <p>"<em>Quando</em> preciso decidir se faço um investimento, abro uma unidade ou contrato crédito, <em>quero</em> ter clareza financeira completa dos impactos no fluxo de caixa e rentabilidade, <em>para que</em> eu não afunde a empresa por uma decisão ruim."</p>
+
+    <h4>Jobs Funcionais Secundários</h4>
+    <ul>
+      <li>Fechar o mês com DRE gerencial, balanço e fluxo de caixa em até 5 dias úteis.</li>
+      <li>Saber em tempo real quanto dinheiro tenho disponível e comprometido.</li>
+      <li>Apresentar números créditos a banco ou investidor sem constrangimento.</li>
+      <li>Ter um especialista para ligar quando aparecer uma oportunidade de M&amp;A.</li>
+      <li>Controlar custos sem micromanagear cada centavo sozinho.</li>
+    </ul>
+
+    <h4>Jobs Sociais e Emocionais</h4>
+    <ul>
+      <li><em>Social:</em> Ser reconhecido como CEO profissionalizado e não como "dono de mercearia".</li>
+      <li><em>Emocional:</em> Sentir que está no controle, dormir sem ansiedade financeira.</li>
+      <li><em>Identitário:</em> Ser o tipo de líder que toma decisões com dados, não no feeling.</li>
+    </ul>
+
+    <h3>Outcome-Driven Innovation (Ulwick)</h3>
+    <p>Ulwick propõe medir os resultados desejados pelo cliente em cada Job. Identificamos as métricas de sucesso que o cliente usa para avaliar se o Job foi bem executado:</p>
+    <table>
+      <tr><th>Resultado Desejado</th><th>Direção</th><th>Unidade</th></tr>
+      <tr><td>Tempo para fechar demonstrativos mensais</td><td>Minimizar</td><td>Dias úteis</td></tr>
+      <tr><td>Acurácia da previsão de fluxo de caixa 90 dias</td><td>Maximizar</td><td>% de desvio</td></tr>
+      <tr><td>Número de surpresas financeiras negativas por trimestre</td><td>Minimizar</td><td>Eventos</td></tr>
+      <tr><td>Tempo de resposta a uma dúvida financeira executiva</td><td>Minimizar</td><td>Horas</td></tr>
+      <tr><td>Custo do time financeiro sobre receita</td><td>Minimizar</td><td>% receita</td></tr>
+      <tr><td>Frequência de atualização do dashboard financeiro</td><td>Maximizar</td><td>Vezes/dia</td></tr>
+    </table>
+
+    <h3>Value Proposition Canvas (Osterwalder)</h3>
+    <h4>Perfil do Cliente</h4>
+    <table>
+      <tr><th>Gains (Ganhos Desejados)</th><th>Pains (Dores)</th><th>Jobs</th></tr>
+      <tr>
+        <td>
+          <ul>
+            <li>Dashboard financeiro em tempo real</li>
+            <li>CFO disponível para ligar</li>
+            <li>Credibilidade com banco/investidor</li>
+            <li>Crescimento sem perder controle</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Fechamento lento e impreciso</li>
+            <li>Fluxo de caixa imprevisível</li>
+            <li>Custo alto de time próprio</li>
+            <li>Decisões baseadas em feeling</li>
+            <li>Surpresas no extrato bancário</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Gerir caixa diário</li>
+            <li>Planejar investimento</li>
+            <li>Captar crédito/investimento</li>
+            <li>Controlar custos</li>
+            <li>Fechar mês</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <h4>Mapa de Valor</h4>
+    <table>
+      <tr><th>Gain Creators</th><th>Pain Relievers</th><th>Products &amp; Services</th></tr>
+      <tr>
+        <td>
+          <ul>
+            <li>Dashboard IA em tempo real</li>
+            <li>CFO virtual 24/7 (agente IA)</li>
+            <li>Relatórios prontos para banco</li>
+            <li>Alertas preditivos de risco</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Fechamento em até 3 dias úteis</li>
+            <li>Previsão de caixa 90-180 dias</li>
+            <li>Custo 60-80% menor que time próprio</li>
+            <li>Agente IA monitora anomalias 24h</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>BPO Financeiro (operacional)</li>
+            <li>CFO-as-a-Service (estratégico)</li>
+            <li>Plataforma FinOps (SaaS)</li>
+            <li>Advisory M&amp;A / fundraising</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 2</strong>
+      A proposta de valor é robusta mas cai em dois erros: (1) tenta servir todos os jobs ao mesmo tempo, diluindo o foco inicial; (2) não articula claramente o que é exclusivo — BPO financeiro e CFO fracionado já existem. O diferenciador de IA precisa ser central, não adicional. Ulwick exige priorizar os outcomes mais subatendidos e superimportantes, não listar todos.
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 2 v2</strong>
+      <strong>Foco no Job de Maior Oportunidade:</strong> Pelo cruzamento importância × satisfação (Ulwick), o Job mais subatendido é: <em>"Prever com confiança o fluxo de caixa dos próximos 90-180 dias e receber alertas antes que um problema se torne crise."</em> Nenhum BPO faz isso com IA preditiva. Isso vira nosso wedge product — o ponto de entrada que cria dependência e expande para os demais serviços.
+    </div>
+
+    <div class="final-result">
+      <strong>Proposta de Valor Central — Ciclo 2</strong>
+      <em>"A FinOps Intelligence é a única plataforma que combina agentes de IA com CFOs humanos para entregar previsão de caixa com 90%+ de acurácia, alertas preditivos de risco financeiro e fechamento contábil em 3 dias úteis — ao custo de um analista sênior, com capacidade de um time de 10 pessoas."</em>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 3 — BUSINESS MODEL CANVAS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c3">
+  <div class="cycle-header">
+    <div class="cycle-num">3</div>
+    <div>
+      <h2>Business Model Canvas + Customer Development</h2>
+      <div class="method">Alexander Osterwalder · Steve Blank (4 Steps to the Epiphany)</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Business Model Canvas</h3>
+    <div class="canvas-grid">
+      <div class="canvas-cell">
+        <h5>Parceiros-Chave</h5>
+        <ul>
+          <li>Escritórios contábeis (canal B2B)</li>
+          <li>Fintechs de crédito (OFX, EBANX)</li>
+          <li>ERPs (TOTVS, SAP, Omie, Conta Azul)</li>
+          <li>Anthropic / OpenAI (LLMs)</li>
+          <li>Bancos (Itaú, Bradesco — dados Open Finance)</li>
+          <li>Associações empresariais (ACSP, SEBRAE)</li>
+        </ul>
+      </div>
+      <div class="canvas-cell wide">
+        <h5>Atividades-Chave</h5>
+        <ul>
+          <li>Desenvolvimento e manutenção de agentes de IA financeiros</li>
+          <li>BPO de processos financeiros (AP, AR, tesouraria, fechamento)</li>
+          <li>Produção de análises e relatórios gerenciais</li>
+          <li>Onboarding e integração com sistemas do cliente</li>
+          <li>Treinamento contínuo de modelos com dados financeiros proprietários</li>
+          <li>Customer Success e expansão de conta</li>
+        </ul>
+      </div>
+      <div class="canvas-cell wide">
+        <h5>Proposta de Valor</h5>
+        <ul>
+          <li><strong>Operacional:</strong> BPO financeiro completo — AP, AR, conciliação, fechamento em 3 dias</li>
+          <li><strong>Tático:</strong> Fluxo de caixa preditivo com 90%+ de acurácia</li>
+          <li><strong>Estratégico:</strong> CFO-as-a-Service para decisões de investimento, crédito, M&amp;A</li>
+          <li><strong>Tecnológico:</strong> Plataforma SaaS com agentes de IA nativos</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <h5>Relacionamento</h5>
+        <ul>
+          <li>Self-serve via plataforma SaaS</li>
+          <li>Dedicated CFO parceiro (contato humano)</li>
+          <li>Agente IA 24/7 para perguntas operacionais</li>
+          <li>QBR (Quarterly Business Review)</li>
+          <li>Comunidade FinOps para clientes</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <h5>Segmentos</h5>
+        <ul>
+          <li><strong>Core:</strong> PMEs R$ 5M–R$ 200M receita</li>
+          <li><strong>Expansion:</strong> Portfólios de PE/VC (10–30 investidas)</li>
+          <li><strong>Premium:</strong> Empresas em processo de M&amp;A / IPO</li>
+          <li><strong>Entry:</strong> Startups Series A/B sem CFO</li>
+        </ul>
+      </div>
+      <div class="canvas-cell wide">
+        <h5>Recursos-Chave</h5>
+        <ul>
+          <li>Plataforma IA proprietária (modelos fine-tuned em dados financeiros BR)</li>
+          <li>Time de CFOs seniores (mínimo 15 anos exp.) — ativos estratégicos</li>
+          <li>Dados financeiros anonimizados (benchmark setorial)</li>
+          <li>Integrações nativas com ERPs, bancos e Open Finance</li>
+          <li>Marca e reputação (NPS &gt;70)</li>
+        </ul>
+      </div>
+      <div class="canvas-cell wide">
+        <h5>Canais</h5>
+        <ul>
+          <li>Venda direta (SDR + AE enterprise)</li>
+          <li>Parceiros contábeis (referral program)</li>
+          <li>Marketplace de ERPs (TOTVS Store, Omie Apps)</li>
+          <li>Conteúdo / SEO ("CFO para PME")</li>
+          <li>Events (congresso CFO, ABF, FIESP)</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <h5>Estrutura de Custos</h5>
+        <ul>
+          <li>Time de CFOs e analistas (45%)</li>
+          <li>Infraestrutura IA / cloud (15%)</li>
+          <li>P&amp;D de plataforma (20%)</li>
+          <li>Vendas e marketing (12%)</li>
+          <li>G&amp;A e compliance (8%)</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <h5>Fontes de Receita</h5>
+        <ul>
+          <li>Assinatura mensal SaaS (R$ 2k–R$ 25k/mês)</li>
+          <li>BPO Financeiro (fee mensal por complexidade)</li>
+          <li>CFO-as-a-Service (retainer mensal)</li>
+          <li>Advisory / projeto (por escopo)</li>
+          <li>Success fee M&amp;A / fundraising (2–5%)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Customer Development (Steve Blank) — 4 Etapas</h3>
+    <h4>1. Customer Discovery</h4>
+    <p>Hipóteses a testar (não assumir): (a) PMEs de R$ 5M–R$ 50M pagarão R$ 5.000/mês por CFO-as-a-Service + plataforma; (b) O pain point de previsão de caixa é mais urgente que o de fechamento contábil; (c) O canal de parceiros contábeis converte melhor que venda direta no início.</p>
+
+    <h4>2. Customer Validation</h4>
+    <p>MVP: Três clientes piloto com plataforma manual + IA + CFO dedicado durante 90 dias. Métricas de validação: NPS &gt;50, 2 de 3 renovam ao fim dos 90 dias, pelo menos 1 expande de tier.</p>
+
+    <h4>3. Customer Creation</h4>
+    <p>Playbook de go-to-market para escalar: inbound via conteúdo + parceiros contábeis como canal de referência (50% das contas). Meta: 50 clientes no ano 1.</p>
+
+    <h4>4. Company Building</h4>
+    <p>Transição de modo startup (founders vendem) para modo empresa (time de vendas, CS, operações escaláveis com IA). Marco: 100 clientes / R$ 6M ARR.</p>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 3</strong>
+      O Canvas está completo mas há conflito de modelo: misturar BPO (labor-intensive, margens baixas) com SaaS (escalável, margens altas) e Advisory (high-value, low-volume) cria tensão de alocação de recursos e confusão de posicionamento. A estrutura de custo mostra 45% em people — isso é um risco de margem grave se o crescimento for por mais clientes sem automação proporcional. Steve Blank alertaria: estamos selling before discovering.
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 3 v2</strong>
+      <strong>Modelo em Camadas (Land &amp; Expand):</strong> Cliente entra pelo SaaS + BPO Automatizado (baixo custo de aquisição, margens crescentes com IA). À medida que confia na plataforma, sobe para CFO-as-a-Service (maior valor, menor escala). Advisory M&amp;A / fundraising é o topo — apenas para clientes maduros. A IA assume crescentemente a camada operacional, liberando os humanos para o estratégico. Meta: 70%+ da camada operacional automatizada em 24 meses, empurrando margem bruta para 65%+.
+    </div>
+
+    <div class="final-result">
+      <strong>Modelo de Negócio Consolidado — Ciclo 3</strong>
+      SaaS-first + BPO + CFO retainer em pirâmide de valor. Receita recorrente base (SaaS + BPO) sustenta o negócio; CFO retainer e Advisory ampliam margem. Automação IA progressiva mantém CAC baixo e LTV alto. ARR target Y3: R$ 30M com margem bruta 60%.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 4 — OKRs
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c4">
+  <div class="cycle-header">
+    <div class="cycle-num">4</div>
+    <div>
+      <h2>Métricas OKR — Objetivos &amp; Resultados-Chave</h2>
+      <div class="method">John Doerr · Google OKR Framework · Measure What Matters</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Ano 1 — Provar o Modelo</h3>
+
+    <div class="okr-block">
+      <div class="okr-objective">O1: Provar que clientes pagam e renovam pelo serviço de CFO-IA</div>
+      <div class="okr-kr">Atingir 50 clientes ativos pagantes até dezembro Y1</div>
+      <div class="okr-kr">NPS médio ≥ 60 após 90 dias de contrato</div>
+      <div class="okr-kr">Churn mensal ≤ 2% (implica retenção anual ≥ 78%)</div>
+      <div class="okr-kr">MRR de R$ 500k até dezembro Y1</div>
+    </div>
+
+    <div class="okr-block">
+      <div class="okr-objective">O2: Validar a acurácia dos agentes IA financeiros</div>
+      <div class="okr-kr">Acurácia de previsão de fluxo de caixa 90 dias ≥ 88% (desvio ≤ 12%)</div>
+      <div class="okr-kr">Tempo médio de fechamento mensal ≤ 3 dias úteis para 80% dos clientes</div>
+      <div class="okr-kr">Taxa de detecção de anomalias financeiras ≥ 95% (alertas verdadeiros)</div>
+      <div class="okr-kr">100% dos relatórios mensais entregues dentro do SLA</div>
+    </div>
+
+    <div class="okr-block">
+      <div class="okr-objective">O3: Construir os canais de aquisição de clientes escaláveis</div>
+      <div class="okr-kr">Firmar 10 parcerias com escritórios contábeis geradores de leads</div>
+      <div class="okr-kr">Converter 25% dos leads de parceiros contábeis em clientes pagantes</div>
+      <div class="okr-kr">CAC médio ≤ R$ 8.000 por cliente</div>
+      <div class="okr-kr">LTV/CAC ≥ 4x ao final do Y1</div>
+    </div>
+
+    <h3>Ano 2 — Escalar a Plataforma</h3>
+
+    <div class="okr-block">
+      <div class="okr-objective">O4: Crescer ARR para R$ 12M com margem bruta ≥ 55%</div>
+      <div class="okr-kr">200 clientes ativos em dezembro Y2</div>
+      <div class="okr-kr">ARPU médio R$ 5.000/mês (expansão de R$ 3k/mês no Y1)</div>
+      <div class="okr-kr">Margem bruta consolidada ≥ 55% (vs. 40% no Y1)</div>
+      <div class="okr-kr">70% da camada operacional (BPO) executada por agentes IA sem intervenção humana</div>
+    </div>
+
+    <div class="okr-block">
+      <div class="okr-objective">O5: Tornar-se referência de mercado em CFO-IA para PME</div>
+      <div class="okr-kr">2 cases publicados em mídia tier-1 (Exame, Valor Econômico, Época Negócios)</div>
+      <div class="okr-kr">NPS ≥ 70 (Net Promoter Score de referência em SaaS)</div>
+      <div class="okr-kr">20% dos novos clientes originados por indicação de clientes existentes</div>
+      <div class="okr-kr">Premiação por pelo menos 1 associação de mercado (ABFinTech, etc.)</div>
+    </div>
+
+    <h3>Ano 3 — Dominar o Mercado</h3>
+
+    <div class="okr-block">
+      <div class="okr-objective">O6: Atingir R$ 30M ARR com EBITDA positivo de 15%+</div>
+      <div class="okr-kr">500 clientes ativos; ARPU R$ 5.000/mês; 15% expansão mensal no tier superior</div>
+      <div class="okr-kr">EBITDA ≥ 15% da receita total</div>
+      <div class="okr-kr">Margem bruta ≥ 65%</div>
+      <div class="okr-kr">Receita internacional (LatAm) ≥ 10% do ARR total</div>
+    </div>
+
+    <h3>North Star Metric</h3>
+    <p style="background:#f0f4ff; border-radius:8px; padding:1rem; font-size:1.05rem;">
+      <strong>NSM: "Decisões financeiras corretas por cliente por mês"</strong> — medido pela combinação de (1) alertas preditivos gerados, (2) simulações executadas e (3) relatórios utilizados para decisão real. Meta: &gt;15 interações de valor/cliente/mês até Y2.
+    </p>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 4</strong>
+      OKRs estão bem estruturados mas: (1) faltam OKRs de produto/tecnologia — o backlog de IA não tem accountability; (2) o KR de churn ≤ 2% é muito agressivo para Y1 sem dados históricos — nenhum serviço novo atinge isso sem benchmarks; (3) a North Star Metric é difícil de medir automaticamente; (4) faltam OKRs de people/cultura — Drucker diria que o maior ativo é a equipe.
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 4 v2</strong>
+      Adicionados OKRs de Produto (velocidade de entrega de features, uptime 99.5%) e de Equipe (eNPS &gt;50, time de CFOs seniores ≥ 8 em Y1). Churn target revisado para ≤ 4% em Y1, evoluindo para ≤ 2% em Y2 após ajuste de produto. NSM simplificada: "Valor financeiro identificado para o cliente por mês" — mensurável via alertas monetizados.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 5 — DRUCKER · SENGE · DEMING
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c5">
+  <div class="cycle-header">
+    <div class="cycle-num">5</div>
+    <div>
+      <h2>Management Excellence — Drucker, Senge &amp; Deming</h2>
+      <div class="method">Peter Drucker (Gestão por Resultados) · Peter Senge (5ª Disciplina) · W. Edwards Deming (TQM / PDCA)</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Peter Drucker — Gestão por Objetivos &amp; Eficácia</h3>
+    <h4>O trabalhador do conhecimento como ativo central</h4>
+    <p>Drucker revolucionou ao dizer que o trabalhador do conhecimento (knowledge worker) é o ativo mais valioso e deve ser gerenciado diferente de um operário. Na FinOps Intelligence, nosso CFO sênior <em>não é um custo</em> — é o produto. Isso implica:</p>
+    <ul>
+      <li><strong>Autonomia com accountability:</strong> Cada CFO parceiro tem portfólio de clientes e P&amp;L próprio. É avaliado por NPS dos seus clientes e por expansão de conta.</li>
+      <li><strong>Foco na eficácia, não eficiência:</strong> "Fazer certo as coisas erradas" é o pior erro. O CFO deve perguntar primeiro "o que é certo para este cliente?" antes de "como faço mais rápido?"</li>
+      <li><strong>Gestão do tempo:</strong> CFOs registram onde gastam tempo; meta é 60%+ em trabalho de alto valor (decisão estratégica com cliente) e &lt;20% em tarefas que a IA pode fazer.</li>
+    </ul>
+
+    <h4>Inovação como função da empresa</h4>
+    <p>Drucker: "A empresa tem apenas duas funções básicas: marketing e inovação." Para nós, isso significa que P&amp;D de agentes IA é tão estratégico quanto vender — e deve ter orçamento protegido (20% da receita).</p>
+
+    <h3>Peter Senge — A Organização que Aprende (5ª Disciplina)</h3>
+    <h4>As 5 Disciplinas aplicadas</h4>
+    <table>
+      <tr><th>Disciplina</th><th>Aplicação na FinOps Intelligence</th></tr>
+      <tr><td>Domínio Pessoal</td><td>CFOs com metas de desenvolvimento individual; certificações obrigatórias anuais; budget de cursos R$ 10k/pessoa/ano</td></tr>
+      <tr><td>Modelos Mentais</td><td>Reuniões quinzenais de "After Action Review" — o que funcionou, o que falhou, o que mudaríamos. Sem punição por erro, punição por não aprender.</td></tr>
+      <tr><td>Visão Compartilhada</td><td>OKRs públicos internamente. Toda a empresa sabe o que importa. Town Hall mensal com CEO compartilhando progresso.</td></tr>
+      <tr><td>Aprendizagem em Equipe</td><td>Squads multidisciplinares (CFO + engenheiro IA + CS) — o cliente é responsabilidade de todos, não de um silo.</td></tr>
+      <tr><td>Pensamento Sistêmico</td><td>Mapeamento de alavancas e loops de reforço: mais dados de clientes → modelo IA melhor → mais acurácia → mais confiança → mais clientes → mais dados. Loop virtuoso explícito na estratégia.</td></tr>
+    </table>
+
+    <h4>Loop de Aprendizagem Sistêmica</h4>
+    <p>Identificamos os principais loops de reforço e balanceamento:</p>
+    <ul>
+      <li><strong>Loop de Reforço R1 (Flywheel de dados):</strong> Clientes → Dados financeiros → Modelos melhores → Alertas mais precisos → Mais valor → Mais clientes.</li>
+      <li><strong>Loop de Reforço R2 (Reputação):</strong> Cases de sucesso → Referências → Novos clientes → Mais cases → Mais referências.</li>
+      <li><strong>Loop de Balanceamento B1 (Qualidade vs. Escala):</strong> Crescimento rápido → Diluição de qualidade de serviço → Churn → Desaceleração. Gestão: onboarding estruturado e ratio CFO/cliente controlado.</li>
+    </ul>
+
+    <h3>W. Edwards Deming — Qualidade Total e PDCA</h3>
+    <h4>Os 14 Pontos de Deming adaptados</h4>
+    <p>Selecionamos os mais críticos para um serviço de gestão financeira:</p>
+    <ul>
+      <li><strong>Constância de propósito:</strong> O mantra "Inteligência Financeira Acessível" é reiterado em toda reunião, produto e comunicação externa.</li>
+      <li><strong>Cessar inspeção em massa; construir qualidade no processo:</strong> Em vez de revisar todos os relatórios humanos, construímos IA que valida automaticamente os dados antes de qualquer relatório sair.</li>
+      <li><strong>Melhorar continuamente:</strong> Ciclo PDCA mensal para cada processo crítico (fechamento, previsão de caixa, onboarding).</li>
+      <li><strong>Eliminar medo:</strong> Cultura de report de erros sem punição — qualquer falha de IA ou humana é um dado, não um crime.</li>
+      <li><strong>Eliminar metas numéricas sem método:</strong> OKRs acompanhados de iniciativas e recursos, não apenas números soltos.</li>
+    </ul>
+
+    <h4>PDCA Aplicado ao Serviço</h4>
+    <table>
+      <tr><th>Fase</th><th>O que fazemos</th><th>Cadência</th></tr>
+      <tr><td><strong>Plan</strong></td><td>Definir SLA do mês, capacidade de time e IA, riscos mapeados por cliente</td><td>Mensal</td></tr>
+      <tr><td><strong>Do</strong></td><td>Execução do BPO + geração de relatórios + alertas IA</td><td>Diário</td></tr>
+      <tr><td><strong>Check</strong></td><td>Review de SLA, NPS pulse, acurácia de previsões, erros capturados</td><td>Semanal</td></tr>
+      <tr><td><strong>Act</strong></td><td>Ajuste de processos, retreinamento de modelos, comunicação proativa ao cliente se houve desvio</td><td>Quinzenal</td></tr>
+    </table>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 5</strong>
+      Boa integração teórica mas risk: (1) o loop de Senge de "dados → modelo melhor" pressupõe que clientes consentirão uso de dados para treino — exige LGPD compliance rigoroso e cláusula contratual explícita; (2) PDCA mensal é lento para startup em fase 0→1 — deveria ser semanal; (3) falta a dimensão de "gestão da inovação disruptiva" de Christensen: como garantir que a FinOps não seja perturbada por concorrente mais simples que entre por baixo?
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 5 v2</strong>
+      (1) Incluído framework de consentimento de dados (LGPD-compliant data pool com opt-in explícito e benefício claro ao cliente: "seus dados nos ajudam a criar benchmarks setoriais que você recebe de volta"). (2) PDCA revisado para quinzenal em Y1, mensal em Y3. (3) Adicionado "Skunk Works" — pequeno time interno de 2-3 engenheiros com mandato de criar o próximo produto disruptivo que poderia substituir o atual.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 6 — IA GENERATIVA E AGENTES
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c6">
+  <div class="cycle-header">
+    <div class="cycle-num">6</div>
+    <div>
+      <h2>Arquitetura de IA Generativa &amp; Agentes</h2>
+      <div class="method">Multi-Agent Systems · RAG · Fine-tuning · Agentic Loops · LLM Orchestration</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Princípio Central</h3>
+    <p>A IA não é uma feature — é a espinha dorsal do negócio. Cada processo financeiro tem um agente especializado. Os agentes colaboram em loops orquestrados. Humanos intervêm apenas em decisões de alto risco ou alta ambiguidade. Isso inverte a equação tradicional: em vez de 10 analistas + 1 IA de suporte, temos 1 CFO sênior + 10 agentes IA.</p>
+
+    <h3>Arquitetura de Agentes</h3>
+    <div class="arch-diagram">
+<span class="layer">══════ CAMADA DE INTERFACE ══════</span>
+│  Chat IA (WhatsApp / Slack / Web)  │  Dashboard  │  API  │
+                       │
+<span class="layer">══════ CAMADA DE ORQUESTRAÇÃO (CFO Orquestrador) ══════</span>
+│  Classifica intenção  │  Roteamento para agente especialista  │
+│  Consolida respostas  │  Escalona para CFO humano se necessário │
+                       │
+<span class="arrow">      ┌────────────┬────────────┬────────────┬────────────┐</span>
+      │            │            │            │            │
+<span class="layer">  [Agente    [Agente     [Agente     [Agente     [Agente</span>
+<span class="layer">   Caixa]    Fechamento] Análise]    Risco]      M&amp;A]</span>
+      │            │            │            │            │
+<span class="arrow">══════════════ CAMADA DE FERRAMENTAS ══════════════════</span>
+│ SQL Financeiro │ APIs Bancárias │ ERPs │ Open Finance │
+│ Planilhas      │ CRM           │ SPED │ B3 / CVM     │
+                       │
+<span class="arrow">══════ CAMADA DE MEMÓRIA E CONHECIMENTO ════════════</span>
+│  Vector DB (histórico do cliente)  │  RAG (normas IFRS/CPC)  │
+│  Fine-tuned LLM (português BR financeiro)  │  Benchmarks setoriais  │
+    </div>
+
+    <h3>Agentes Especialistas — Descrição Funcional</h3>
+    <table>
+      <tr><th>Agente</th><th>Função Principal</th><th>Ferramentas</th><th>Loop Autônomo</th></tr>
+      <tr>
+        <td><strong>Agente Tesoureiro</strong></td>
+        <td>Monitora saldos em tempo real, prevê fluxo de caixa 90-180 dias, alerta para déficits antecipadamente</td>
+        <td>APIs bancárias, Open Finance, modelos preditivos</td>
+        <td>Roda a cada hora; alertas automáticos para déficits previstos em &gt;7 dias</td>
+      </tr>
+      <tr>
+        <td><strong>Agente Controller</strong></td>
+        <td>Executa conciliação bancária automatizada, categoriza transações, prepara rascunho do fechamento mensal</td>
+        <td>ERP, extrato bancário, tabela de plano de contas</td>
+        <td>Roda diariamente; fecha 95% das transações sem intervenção humana</td>
+      </tr>
+      <tr>
+        <td><strong>Agente Analista Financeiro</strong></td>
+        <td>Gera DRE gerencial, análise de desvio vs. budget, análise de margem por produto/cliente/canal</td>
+        <td>ERP, planilha de budget, histórico de performance</td>
+        <td>Gera relatórios automaticamente no fechamento; responde perguntas ad hoc via chat</td>
+      </tr>
+      <tr>
+        <td><strong>Agente de Risco</strong></td>
+        <td>Detecta anomalias (transações suspeitas, desvios de margem, concentração de clientes), avalia exposição a câmbio/juros</td>
+        <td>Dados de transações, benchmarks setoriais, indicadores macro</td>
+        <td>Monitoramento contínuo; score de risco atualizado diariamente</td>
+      </tr>
+      <tr>
+        <td><strong>Agente AP/AR</strong></td>
+        <td>Monitora contas a pagar e receber, agenda pagamentos, identifica inadimplência iminente, negocia prazos automaticamente</td>
+        <td>ERP, email (para cobranças), calendário financeiro</td>
+        <td>Agenda pagamentos; emite alertas de vencimento; envia cobranças automatizadas</td>
+      </tr>
+      <tr>
+        <td><strong>Agente CFO Estratégico</strong></td>
+        <td>Responde perguntas executivas ("se eu abrir uma filial em SP, qual impacto no caixa nos próximos 12 meses?"), gera simulações e cenários</td>
+        <td>Todos os dados do cliente + modelos macroeconômicos + LLM de ponta</td>
+        <td>Sob demanda via chat; gera relatório executivo mensal proativamente</td>
+      </tr>
+    </table>
+
+    <h3>Loop de Melhoria Contínua dos Agentes</h3>
+    <p>Os agentes melhoram com o uso via um loop de feedback fechado:</p>
+    <ul>
+      <li><strong>Geração:</strong> Agente produz saída (relatório, alerta, previsão).</li>
+      <li><strong>Avaliação humana:</strong> CFO humano ou cliente valida / corrige / descarta.</li>
+      <li><strong>Captura:</strong> Correções são armazenadas com contexto (por que estava errado, qual o certo).</li>
+      <li><strong>Retreinamento:</strong> Fine-tuning periódico (mensal) com exemplos corrigidos.</li>
+      <li><strong>Benchmark:</strong> A acurácia de cada agente é medida continuamente — qualquer degradação dispara retreinamento imediato.</li>
+    </ul>
+
+    <h3>Stack Tecnológico</h3>
+    <table>
+      <tr><th>Camada</th><th>Tecnologia Principal</th><th>Alternativa / Fallback</th></tr>
+      <tr><td>LLM Base</td><td>Claude (Anthropic) — contexto longo, raciocínio financeiro</td><td>GPT-4o / Gemini Pro</td></tr>
+      <tr><td>Orquestração de Agentes</td><td>Claude Agent SDK (multi-agent, tool use)</td><td>LangGraph, AutoGen</td></tr>
+      <tr><td>Vector Store / RAG</td><td>Pinecone + embeddings proprietários</td><td>Weaviate, pgvector</td></tr>
+      <tr><td>Fine-tuning</td><td>Anthropic fine-tune API + dataset financeiro BR</td><td>OpenAI fine-tune</td></tr>
+      <tr><td>Backend</td><td>Python (FastAPI) + PostgreSQL + Redis</td><td>Node.js</td></tr>
+      <tr><td>Integrações</td><td>Plaid BR / Open Finance BACEN + APIs ERPs</td><td>Webhooks custom</td></tr>
+      <tr><td>Infra</td><td>AWS (EKS + RDS + S3) + Terraform</td><td>GCP</td></tr>
+      <tr><td>Segurança</td><td>SOC 2 Type II + LGPD + criptografia AES-256</td><td>ISO 27001</td></tr>
+    </table>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 6</strong>
+      A arquitetura é sólida mas: (1) dependência excessiva de um único provedor de LLM (Anthropic) — risco de lock-in e custos crescentes; (2) a integração com Open Finance BR ainda está em maturação — muitos bancos têm APIs instáveis; (3) o loop de retreinamento mensal pode ser lento demais para detectar drift em modelos de previsão de caixa em momentos de choque macro (COVID, crise cambial); (4) LGPD exige que clientes possam pedir exclusão de dados — isso é tecnicamente complexo com fine-tuning em dados cumulativos.
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 6 v2</strong>
+      (1) Arquitetura agnóstica de LLM com abstração (Model Router) — permite trocar de provedor em horas. (2) Camada de dados resiliente para Open Finance com fallback manual quando APIs bancárias falham. (3) Monitoramento de drift com alertas automáticos quando acurácia cai &gt;5% em qualquer janela de 7 dias — retreinamento sob demanda, não apenas mensal. (4) Separação técnica de dados de treino por cliente com tokenização — permitindo exclusão sem afetar o modelo base.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 7 — PLANO DE TECNOLOGIA
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c7">
+  <div class="cycle-header">
+    <div class="cycle-num">7</div>
+    <div>
+      <h2>Plano de Desenvolvimento de Tecnologia</h2>
+      <div class="method">Product Roadmap · MVP → MMP → Escala · DevOps · Security-first</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Fases de Desenvolvimento</h3>
+    <table>
+      <tr><th>Fase</th><th>Período</th><th>Entregas</th><th>Meta de Clientes</th></tr>
+      <tr>
+        <td><strong>MVP</strong><br/><span class="badge badge-red">Meses 1-3</span></td>
+        <td>M1–M3</td>
+        <td>
+          <ul>
+            <li>Integração com 3 principais bancos BR (Itaú, Bradesco, Santander)</li>
+            <li>Dashboard básico de fluxo de caixa</li>
+            <li>Agente Tesoureiro v1 (previsão simples)</li>
+            <li>Relatório mensal gerado com IA + revisão humana</li>
+            <li>Portal do cliente (web responsivo)</li>
+          </ul>
+        </td>
+        <td>3–5 piloto</td>
+      </tr>
+      <tr>
+        <td><strong>MMP</strong><br/><span class="badge badge-gold">Meses 4-9</span></td>
+        <td>M4–M9</td>
+        <td>
+          <ul>
+            <li>Agentes Controller e AP/AR</li>
+            <li>Integração com TOTVS, Omie, SAP B1</li>
+            <li>Chat IA financeiro (WhatsApp Business)</li>
+            <li>Open Finance BACEN (APIs nativas)</li>
+            <li>Painel de benchmarks setoriais</li>
+            <li>Onboarding self-serve (14 dias)</li>
+          </ul>
+        </td>
+        <td>20–50</td>
+      </tr>
+      <tr>
+        <td><strong>Escala v1</strong><br/><span class="badge badge-blue">Meses 10-18</span></td>
+        <td>M10–M18</td>
+        <td>
+          <ul>
+            <li>Agente CFO Estratégico completo (simulações, cenários)</li>
+            <li>Agente de Risco com scoring diário</li>
+            <li>App mobile (iOS + Android)</li>
+            <li>API pública para parceiros</li>
+            <li>SOC 2 Type II certificação</li>
+            <li>Expansão para contabilidade fiscal (SPED)</li>
+          </ul>
+        </td>
+        <td>100–200</td>
+      </tr>
+      <tr>
+        <td><strong>Escala v2</strong><br/><span class="badge badge-green">M19–M36</span></td>
+        <td>M19–M36</td>
+        <td>
+          <ul>
+            <li>Expansão LatAm (México, Colombia, Chile)</li>
+            <li>Módulo M&amp;A e valuation automático</li>
+            <li>Integração com B3 e CVM (dados públicos)</li>
+            <li>Marketplace de CFOs parceiros certificados</li>
+            <li>AI-native mobile experience</li>
+          </ul>
+        </td>
+        <td>300–500</td>
+      </tr>
+    </table>
+
+    <h3>Infraestrutura &amp; Segurança</h3>
+    <ul>
+      <li><strong>Multi-tenant SaaS:</strong> Isolamento por namespace no banco de dados; dados de cada cliente separados logicamente e opcionalmente fisicamente (tier premium).</li>
+      <li><strong>Zero-trust security:</strong> MFA obrigatório, RBAC granular (usuário financeiro, gestor, CFO parceiro, admin).</li>
+      <li><strong>LGPD por design:</strong> Minimização de dados, consentimento granular, portal de direitos do titular.</li>
+      <li><strong>SLA de disponibilidade:</strong> 99.5% uptime (máx 3.6h downtime/mês); 99.9% para tier enterprise.</li>
+      <li><strong>Disaster Recovery:</strong> RTO &lt; 1h, RPO &lt; 15min; backups automáticos a cada 15 minutos.</li>
+    </ul>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 7</strong>
+      O roadmap é bem estruturado mas: (1) Meses 1-3 são muito ambiciosos para integração com 3 bancos — APIs bancárias BR têm processo de homologação de 60-90 dias por banco; (2) Falta definir os critérios de "done" para cada fase — como sabemos que o MVP está pronto?; (3) A certificação SOC 2 Type II leva 6-12 meses e é muito cara para startup early-stage — deve ser adiada ou substituída por ISO 27001 inicialmente.
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 7 v2</strong>
+      MVP revisado: em M1-M3, focamos em integração via Open Finance BACEN (1 endpoint, acessa todos os bancos) + 1 banco direto via OFX (formato legado). SOC 2 movido para M18+; ISO 27001 iniciado em M6. Adicionados "Definition of Done" por fase: taxa de erros de conciliação automática &lt;1%, NPS piloto &gt;50, tempo de onboarding &lt;2 semanas.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 8 — MERCADO E CLIENTES
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c8">
+  <div class="cycle-header">
+    <div class="cycle-num">8</div>
+    <div>
+      <h2>Desenvolvimento de Mercado &amp; Clientes</h2>
+      <div class="method">TAM/SAM/SOM · ICP · Go-to-Market · Sales Playbook · PLG</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Tamanho de Mercado</h3>
+    <table>
+      <tr><th>Segmento</th><th>Empresas no Brasil</th><th>Ticket Médio Anual</th><th>Mercado</th></tr>
+      <tr><td>TAM (Total Addressable Market)</td><td>~650.000 empresas com receita R$ 2M–R$ 500M</td><td>R$ 36.000/ano</td><td>R$ 23 bilhões</td></tr>
+      <tr><td>SAM (Serviceable Addressable Market)</td><td>~120.000 (R$ 5M–R$ 200M, digitalizadas)</td><td>R$ 60.000/ano</td><td>R$ 7,2 bilhões</td></tr>
+      <tr><td>SOM Y3 (Serviceable Obtainable Market)</td><td>500 clientes</td><td>R$ 60.000/ano</td><td>R$ 30M ARR</td></tr>
+    </table>
+
+    <h3>ICP — Ideal Customer Profile</h3>
+    <table>
+      <tr><th>Dimensão</th><th>Primário</th><th>Secundário</th></tr>
+      <tr><td>Receita anual</td><td>R$ 15M–R$ 80M</td><td>R$ 5M–R$ 15M (entry) / R$ 80M–R$ 200M (enterprise)</td></tr>
+      <tr><td>Setor</td><td>Varejo/e-commerce, Serviços B2B, Saúde, Agro processado</td><td>Construção civil, Logística, Educação</td></tr>
+      <tr><td>Maturidade digital</td><td>Usa ERP cloud (Omie, Conta Azul, TOTVS Protheus)</td><td>Planilha Excel + contabilidade terceirizada</td></tr>
+      <tr><td>Dor principal</td><td>Fluxo de caixa imprevisível + crescimento sem controle</td><td>Precisando captar crédito ou investment</td></tr>
+      <tr><td>Decisor principal</td><td>CEO/Fundador (40%) + Diretor Financeiro (35%)</td><td>Conselho / Sócios (25%)</td></tr>
+      <tr><td>Localização</td><td>SP, RJ, MG (fases 1-2)</td><td>Sul + Nordeste (fase 3) + LatAm (fase 4)</td></tr>
+    </table>
+
+    <h3>Go-to-Market Strategy</h3>
+    <h4>Fase 1 (M1-M6): Founder-led Sales + Parceiros Contábeis</h4>
+    <ul>
+      <li>CEO e cofundadores vendem os primeiros 20 clientes diretamente (relações pessoais + credibilidade).</li>
+      <li>Parceria com 5 escritórios contábeis grandes de SP que servem PMEs na faixa alvo — modelo de referral (20% do MRR do cliente indicado, por 12 meses).</li>
+      <li>Conteúdo de autoridade: newsletter "CFO Weekly" para CEOs de PME, LinkedIn pessoal do CEO.</li>
+    </ul>
+
+    <h4>Fase 2 (M7-M18): Sales Team + Inbound</h4>
+    <ul>
+      <li>Time de vendas: 2 SDRs + 2 Account Executives focados em PME.</li>
+      <li>SEO + conteúdo: ranquear para "CFO terceirizado SP", "fluxo de caixa PME", "gestor financeiro para empresa".</li>
+      <li>Parceria com associações: ACSP, FIESP, CDL, franchisors (ABF) — acesso a base de associados.</li>
+      <li>Marketplace TOTVS e Omie: listagem como app parceiro — canal de distribuição de baixo custo.</li>
+    </ul>
+
+    <h4>Fase 3 (M19+): PLG + Enterprise + LatAm</h4>
+    <ul>
+      <li>Freemium / Free Trial 30 dias para onboarding self-serve (converte para pago).</li>
+      <li>Equipe enterprise para portfólios PE/VC (ticket mínimo R$ 25k/mês por portfólio).</li>
+      <li>Expansão México (primeiro mercado LatAm) — parceiros locais contábeis.</li>
+    </ul>
+
+    <h3>Sales Playbook — Ciclo de Venda</h3>
+    <table>
+      <tr><th>Etapa</th><th>Ação</th><th>Duração</th><th>Responsável</th></tr>
+      <tr><td>Lead</td><td>Conteúdo / referral / evento → MQL identificado</td><td>—</td><td>Marketing</td></tr>
+      <tr><td>Qualificação</td><td>SDR: BANT + fit com ICP + dor mapeada</td><td>1-2 dias</td><td>SDR</td></tr>
+      <tr><td>Discovery</td><td>AE: 60min call — mapeamento financeiro da empresa</td><td>1 semana</td><td>AE</td></tr>
+      <tr><td>Proposta</td><td>Proposta customizada + demo da plataforma</td><td>3-5 dias</td><td>AE + CFO</td></tr>
+      <tr><td>Piloto</td><td>30 dias de piloto com 1 módulo; CFO dedicado</td><td>30 dias</td><td>CFO + CS</td></tr>
+      <tr><td>Fechamento</td><td>Conversão para contrato anual com desconto 10-15%</td><td>1-2 semanas</td><td>AE</td></tr>
+    </table>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 8</strong>
+      GTM está bem estruturado mas: (1) O ciclo de venda de 60+ dias pode ser problema de caixa em early-stage — precisa de forma de acelerar decisão; (2) O canal de parceiros contábeis tem risco de conflito de interesse — o contador pode ver a FinOps como concorrente, não parceiro; (3) TAM de R$ 23B é marketing number — SOM de R$ 30M em Y3 com apenas 500 clientes é muito conservador se o GTM funcionar; (4) Falta lifetime value e payback calculados explicitamente.
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 8 v2</strong>
+      (1) Adicionado "Fast-close: 30-day pilot que já é faturado (piloto pago de R$ 2.000/mês)" — elimina ciclo de gratuidade e valida intenção de compra real. (2) Posicionamento para contadores: eles <em>ficam</em> como contábil fiscal; a FinOps assume gerencial e estratégico — complemento, não substituto. Workshop gratuito para contadores sobre "como reter clientes PME com serviços financeiros gerenciais". (3) LTV calculado: ticket médio R$ 5k/mês × retenção 24 meses = LTV R$ 120k. CAC alvo R$ 15k. LTV/CAC = 8x (excelente). Payback 3 meses.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 9 — OPERAÇÕES
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c9">
+  <div class="cycle-header">
+    <div class="cycle-num">9</div>
+    <div>
+      <h2>Plano de Operações</h2>
+      <div class="method">Service Operations · Team Design · SLA Management · Onboarding · Quality System</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Modelo Operacional — IA + Humano</h3>
+    <p>A regra de ouro operacional: <strong>IA faz, humano valida e decide.</strong> Em 24 meses, a ambição é: IA executa 80%+ das tarefas operacionais sem intervenção; humanos focam em 20% de alto valor (julgamento, relacionamento, exceções).</p>
+
+    <h3>Estrutura de Time — Ano 1</h3>
+    <table>
+      <tr><th>Função</th><th>Qtd Y1</th><th>Qtd Y2</th><th>Qtd Y3</th><th>Nota</th></tr>
+      <tr><td>CEO / Co-fundador</td><td>1</td><td>1</td><td>1</td><td>Vendas + estratégia</td></tr>
+      <tr><td>CTO / Co-fundador</td><td>1</td><td>1</td><td>1</td><td>Plataforma + IA</td></tr>
+      <tr><td>CFO Sênior Parceiro</td><td>3</td><td>8</td><td>18</td><td>Ratio: 1 CFO por 15-20 clientes</td></tr>
+      <tr><td>Engenheiro de IA</td><td>2</td><td>5</td><td>10</td><td>Agentes + modelos</td></tr>
+      <tr><td>Engenheiro Full-Stack</td><td>2</td><td>4</td><td>8</td><td>Plataforma + integrações</td></tr>
+      <tr><td>Analista Financeiro</td><td>2</td><td>4</td><td>6</td><td>Suporte aos CFOs + QA dos agentes</td></tr>
+      <tr><td>Customer Success</td><td>1</td><td>3</td><td>6</td><td>Ratio: 1 CS por 50 clientes</td></tr>
+      <tr><td>SDR / AE</td><td>2</td><td>4</td><td>8</td><td>Pipeline comercial</td></tr>
+      <tr><td>G&amp;A (Financeiro + RH + Legal)</td><td>1</td><td>2</td><td>4</td><td>Infraestrutura interna</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>15</strong></td><td><strong>32</strong></td><td><strong>62</strong></td><td></td></tr>
+    </table>
+
+    <h3>Processo de Onboarding — 14 Dias</h3>
+    <table>
+      <tr><th>Dia</th><th>Atividade</th><th>Responsável</th></tr>
+      <tr><td>D1-D2</td><td>Kickoff: mapeamento de sistemas, credenciais de acesso, contrato assinado</td><td>CS + CFO Parceiro</td></tr>
+      <tr><td>D3-D5</td><td>Integração técnica: ERP + bancos + Open Finance configurados</td><td>Engenheiro + CS</td></tr>
+      <tr><td>D6-D8</td><td>Histórico financeiro carregado (12 meses mínimo); categorização e validação</td><td>Agente Controller + Analista</td></tr>
+      <tr><td>D9-D11</td><td>Primeiro fechamento de período (mês anterior); validação com cliente</td><td>CFO Parceiro + Agentes</td></tr>
+      <tr><td>D12-D13</td><td>Dashboard configurado; alertas personalizados ativos; treinamento do time do cliente</td><td>CS + CFO</td></tr>
+      <tr><td>D14</td><td>Reunião de entrega: primeiros insights, estabelecer cadência de reuniões mensais</td><td>CFO Parceiro</td></tr>
+    </table>
+
+    <h3>SLA — Service Level Agreement</h3>
+    <table>
+      <tr><th>Serviço</th><th>SLA Comprometido</th><th>Meta Interna</th></tr>
+      <tr><td>Fechamento mensal (DRE + Balanço)</td><td>5 dias úteis após fim do mês</td><td>3 dias úteis</td></tr>
+      <tr><td>Atualização de saldo de caixa</td><td>A cada 4 horas</td><td>A cada 1 hora</td></tr>
+      <tr><td>Resposta a pergunta via chat IA</td><td>Instantânea (IA) / 4h (humano)</td><td>Instantânea (IA) / 2h (humano)</td></tr>
+      <tr><td>Alerta de risco financeiro</td><td>24 horas antes do evento</td><td>72 horas antes</td></tr>
+      <tr><td>Relatório executivo mensal</td><td>Até dia 8 de cada mês</td><td>Até dia 5</td></tr>
+      <tr><td>Disponibilidade da plataforma</td><td>99.5%</td><td>99.9%</td></tr>
+    </table>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 9</strong>
+      Operações bem definidas mas: (1) O ratio 1 CFO para 15-20 clientes pode ser insustentável em Y1 se clientes forem ativos — risco de burnout dos CFOs seniores que são o ativo mais crítico; (2) O onboarding de 14 dias pressupõe que o cliente tem dados limpos — na prática, PMEs têm dados bagunçados, podendo triplicar o tempo; (3) Falta plano de contingência para quando o modelo IA falha numa previsão crítica — quem responde ao cliente, como?
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 9 v2</strong>
+      (1) Ratio revisado para 1 CFO / 10 clientes em Y1, aumentando para 1/18 em Y2 à medida que IA absorve mais trabalho. (2) Onboarding com "Data Triage" na semana 0 — analista avalia qualidade dos dados antes de iniciar; clientes com dados muito desorganizados recebem "onboarding estendido de 30 dias" com fee adicional ou ingressam no tier superior. (3) "Protocolo de Falha de IA": qualquer previsão com confidence score &lt;75% é escalada automaticamente para CFO humano antes de chegar ao cliente.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 10 — FINANÇAS E CAPITAL
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c10">
+  <div class="cycle-header">
+    <div class="cycle-num">10</div>
+    <div>
+      <h2>Plano Financeiro &amp; Estratégia de Capital</h2>
+      <div class="method">P&amp;L · Unit Economics · Funding Strategy · Cash Flow · Path to Profitability</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>Projeções Financeiras — 3 Anos</h3>
+    <table>
+      <tr><th>Métrica</th><th>Ano 1</th><th>Ano 2</th><th>Ano 3</th></tr>
+      <tr><td>Clientes ativos (fim do ano)</td><td>50</td><td>200</td><td>500</td></tr>
+      <tr><td>ARPU mensal</td><td>R$ 3.200</td><td>R$ 5.000</td><td>R$ 5.500</td></tr>
+      <tr><td>MRR (fim do ano)</td><td>R$ 160k</td><td>R$ 1,0M</td><td>R$ 2,75M</td></tr>
+      <tr><td>ARR (fim do ano)</td><td>R$ 1,9M</td><td>R$ 12M</td><td>R$ 33M</td></tr>
+      <tr><td>Receita total do ano</td><td>R$ 900k</td><td>R$ 6,5M</td><td>R$ 22M</td></tr>
+      <tr><td>Margem Bruta</td><td>38%</td><td>55%</td><td>65%</td></tr>
+      <tr><td>Lucro Bruto</td><td>R$ 342k</td><td>R$ 3,6M</td><td>R$ 14,3M</td></tr>
+      <tr><td>Opex (S&amp;M + P&amp;D + G&amp;A)</td><td>R$ 2,8M</td><td>R$ 5,5M</td><td>R$ 10,5M</td></tr>
+      <tr><td>EBITDA</td><td>(R$ 2,5M)</td><td>(R$ 1,9M)</td><td>R$ 3,8M (17%)</td></tr>
+      <tr><td>Queima mensal (média)</td><td>R$ 210k</td><td>R$ 160k</td><td>positivo M28</td></tr>
+    </table>
+
+    <h3>Unit Economics</h3>
+    <table>
+      <tr><th>Métrica</th><th>Y1</th><th>Y2</th><th>Y3</th></tr>
+      <tr><td>CAC (Custo de Aquisição de Cliente)</td><td>R$ 12k</td><td>R$ 9k</td><td>R$ 7k</td></tr>
+      <tr><td>LTV (Lifetime Value — 24 meses)</td><td>R$ 77k</td><td>R$ 120k</td><td>R$ 132k</td></tr>
+      <tr><td>LTV/CAC</td><td>6,4x</td><td>13,3x</td><td>18,9x</td></tr>
+      <tr><td>Payback period</td><td>3,8 meses</td><td>1,8 meses</td><td>1,3 meses</td></tr>
+      <tr><td>Churn anual</td><td>30%</td><td>20%</td><td>12%</td></tr>
+      <tr><td>Expansion Revenue (% clientes expandindo)</td><td>15%</td><td>25%</td><td>35%</td></tr>
+    </table>
+
+    <h3>Estrutura de Custos Detalhada — Ano 1</h3>
+    <table>
+      <tr><th>Item</th><th>Valor Mensal</th><th>% Receita</th></tr>
+      <tr><td>Folha — CFOs Seniores (3 × R$ 25k)</td><td>R$ 75k</td><td>25%</td></tr>
+      <tr><td>Folha — Engenheiros (4 × R$ 18k)</td><td>R$ 72k</td><td>24%</td></tr>
+      <tr><td>Folha — CS + Analistas (3 × R$ 12k)</td><td>R$ 36k</td><td>12%</td></tr>
+      <tr><td>Infra Cloud + APIs LLM</td><td>R$ 28k</td><td>9%</td></tr>
+      <tr><td>Vendas + Marketing</td><td>R$ 40k</td><td>13%</td></tr>
+      <tr><td>G&amp;A (aluguel, jurídico, contábil)</td><td>R$ 18k</td><td>6%</td></tr>
+      <tr><td><strong>Total Opex Mensal</strong></td><td><strong>R$ 269k</strong></td><td><strong>90%</strong></td></tr>
+    </table>
+
+    <h3>Estratégia de Capital</h3>
+
+    <h4>Rodada Seed — R$ 3M (M1)</h4>
+    <ul>
+      <li><strong>Uso:</strong> 18 meses de runway para MVP + 50 clientes. Folha, infra, primeiras integrações.</li>
+      <li><strong>Fontes:</strong> Angels estratégicos (ex-CFOs, ex-banqueiros), family offices, aceleradoras (Y Combinator BR, Distrito, ACE Startups).</li>
+      <li><strong>Valuation pre-money:</strong> R$ 9–12M (10–15x ARR projetado Y1).</li>
+      <li><strong>Marco para próxima rodada:</strong> 50 clientes, MRR R$ 150k, churn &lt;3% mensal.</li>
+    </ul>
+
+    <h4>Série A — R$ 15M (M18-M24)</h4>
+    <ul>
+      <li><strong>Uso:</strong> Escalar time de vendas, P&amp;D de plataforma, expansão geográfica.</li>
+      <li><strong>Fontes:</strong> VCs focados em fintech/SaaS: Kaszek, Softbank LatAm, Monashees, Canary.</li>
+      <li><strong>Valuation pre-money:</strong> R$ 60–90M (5–7x ARR em R$ 12M).</li>
+      <li><strong>Marco para próxima rodada:</strong> 200 clientes, ARR R$ 12M, EBITDA negativo mas margem melhorando.</li>
+    </ul>
+
+    <h4>Série B — R$ 50M+ (M36-M42)</h4>
+    <ul>
+      <li><strong>Uso:</strong> Expansão LatAm, aquisições estratégicas de competidores menores, produto enterprise.</li>
+      <li><strong>Valuation target:</strong> R$ 300M+ (10x ARR R$ 30M).</li>
+    </ul>
+
+    <h3>Path to Profitability</h3>
+    <p>Break-even operacional projetado para <strong>mês 28</strong> (2 anos e 4 meses), com ~180 clientes ativos e MRR de R$ 750k. A alavanca principal é o aumento da margem bruta de 38% (Y1) para 65% (Y3) via substituição progressiva de trabalho humano por IA nos processos operacionais.</p>
+
+    <div class="critique">
+      <strong>Avaliação Crítica — Ciclo 10</strong>
+      As projeções são otimistas mas realistas para o setor. Riscos: (1) Churn de 30% em Y1 é alto e pode criar "leaky bucket" — se CAC é R$ 12k e 30% dos clientes vão embora, o crescimento líquido desacelera muito; (2) A dependência de capital de risco em rodada Seed de R$ 3M pode ser insuficiente — o burn rate de R$ 269k/mês dá apenas 11 meses de runway, muito curto para validar e ir a Série A; (3) A margem bruta de 38% em Y1 é baixa para SaaS — investidores em VC esperam 60%+ mesmo no Y1 para SaaS puro.
+    </div>
+
+    <div class="improvement">
+      <strong>Melhoria Aplicada → Ciclo 10 v2</strong>
+      (1) Seed aumentada para R$ 5M (18+ meses de runway) via conversível com cap de R$ 15M. (2) Estratégia de "Default Alive": meta de atingir MRR = Opex/mês até M18 — se não conseguir Série A, a empresa pode sobreviver. (3) Mix de receita revisado: SaaS puro (maior margem) deve ser pelo menos 40% da receita em Y1, não apenas o BPO (menor margem). Onboarding e setup fee de R$ 3k–R$ 8k por cliente melhora caixa inicial. (4) Churn meta revisado: 20% no Y1 (ao invés de 30%), atingível com contrato mínimo de 12 meses e onboarding estruturado.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CICLO 11 — SÍNTESE FINAL
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cycle" id="c11">
+  <div class="cycle-header">
+    <div class="cycle-num">11</div>
+    <div>
+      <h2>Síntese Final — O Negócio Completo</h2>
+      <div class="method">Integrated Business Description · Competitive Moats · Scalability Proof · Investment Thesis</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+
+    <h3>O Negócio em Uma Página</h3>
+
+    <div class="summary-box">
+      <h2>FinOps Intelligence</h2>
+      <p><strong style="color:var(--gold)">Mantra:</strong> "Seu CFO de IA"</p>
+      <p>A FinOps Intelligence é uma plataforma SaaS de CFO-as-a-Service potencializada por agentes de IA generativa, que entrega gestão financeira completa — do operacional ao executivo — para empresas de médio porte (R$ 5M–R$ 200M de receita) no Brasil e LatAm. Combinamos CFOs seniores com agentes de IA especializados para oferecer capacidade de time financeiro de grande empresa, ao custo de um analista sênior.</p>
+
+      <h3>O Problema</h3>
+      <p>Empresas de médio porte no Brasil sofrem de "analfabetismo financeiro estrutural": faturamento relevante, mas sem capacidade de previsão de caixa, controle de custos, análise de rentabilidade ou decisões financeiras baseadas em dados. Seis em dez PMEs fecham antes de cinco anos, e 40% dessas mortes têm causa financeira direta. O mercado endereçável é de R$ 7,2 bilhões de SAM.</p>
+
+      <h3>Nossa Solução</h3>
+      <ul>
+        <li><strong>Agente Tesoureiro IA:</strong> Previsão de fluxo de caixa 90-180 dias com 90%+ de acurácia; alertas de risco automáticos.</li>
+        <li><strong>BPO Financeiro Automatizado:</strong> Conciliação bancária, AP/AR, fechamento mensal em 3 dias úteis — 80% automatizado por IA.</li>
+        <li><strong>CFO-as-a-Service:</strong> CFO sênior dedicado para decisões estratégicas, simulações de cenário, preparação para crédito e M&amp;A.</li>
+        <li><strong>Dashboard Executivo:</strong> Visão financeira em tempo real via app e chat IA (WhatsApp/Slack).</li>
+      </ul>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="value">R$ 33M</div>
+          <div class="label">ARR Projetado Y3</div>
+        </div>
+        <div class="metric-card">
+          <div class="value">500</div>
+          <div class="label">Clientes em Y3</div>
+        </div>
+        <div class="metric-card">
+          <div class="value">65%</div>
+          <div class="label">Margem Bruta Y3</div>
+        </div>
+        <div class="metric-card">
+          <div class="value">17%</div>
+          <div class="label">EBITDA Y3</div>
+        </div>
+        <div class="metric-card">
+          <div class="value">18,9x</div>
+          <div class="label">LTV/CAC Y3</div>
+        </div>
+        <div class="metric-card">
+          <div class="value">Mês 28</div>
+          <div class="label">Break-even</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Vantagens Competitivas Sustentáveis (Moats)</h3>
+    <table>
+      <tr><th>Moat</th><th>Como se Manifesta</th><th>Fortalece com Escala?</th></tr>
+      <tr>
+        <td><strong>Dados Proprietários</strong></td>
+        <td>Base de dados financeiros anonimizados de centenas de PMEs brasileiras — benchmarks setoriais que nenhum concorrente tem</td>
+        <td>Sim — mais clientes = dados melhores = modelos mais precisos</td>
+      </tr>
+      <tr>
+        <td><strong>Switching Cost Alto</strong></td>
+        <td>Após 6 meses, todo o histórico financeiro está na plataforma; migrar é muito custoso</td>
+        <td>Sim — cada mês de uso aumenta o custo de saída</td>
+      </tr>
+      <tr>
+        <td><strong>Rede de CFOs Seniores</strong></td>
+        <td>Network de CFOs certificados e treinados no método FinOps — difícil de replicar</td>
+        <td>Sim — mais CFOs = maior capacidade e diversidade setorial</td>
+      </tr>
+      <tr>
+        <td><strong>Modelo Híbrido IA+Humano</strong></td>
+        <td>Nem puro software (sem confiança humana) nem puro consulting (sem escala) — posição única</td>
+        <td>Sim — IA melhora com tempo; humanos se especializam mais</td>
+      </tr>
+      <tr>
+        <td><strong>Brand e Reputação</strong></td>
+        <td>Em serviços financeiros, confiança é o produto — uma marca de 5 anos com NPS 70+ é intangível valioso</td>
+        <td>Sim — casos de sucesso se compõem</td>
+      </tr>
+    </table>
+
+    <h3>Por Que Agora</h3>
+    <ul>
+      <li><strong>Open Finance BR:</strong> O BACEN obrigou todos os bancos a abrirem APIs em 2023 — nunca foi tão fácil agregar dados financeiros de uma empresa.</li>
+      <li><strong>Maturidade de LLMs:</strong> Modelos como Claude e GPT-4o têm raciocínio financeiro sofisticado o suficiente para serem CFOs assistentes — isso não era verdade há 2 anos.</li>
+      <li><strong>Digitalização pós-COVID:</strong> PMEs que resistiam a adotar ferramentas digitais foram forçadas; a barreira de adoção de SaaS financeiro caiu drasticamente.</li>
+      <li><strong>Escassez de CFOs seniores:</strong> O Brasil tem déficit de profissionais financeiros sêniores para o tamanho do setor corporativo; IA resolve o problema de escala sem resolver o de julgamento — nossa combinação é a resposta.</li>
+    </ul>
+
+    <h3>Comparativo Competitivo</h3>
+    <table>
+      <tr><th>Dimensão</th><th>FinOps Intelligence</th><th>BPO Financeiro Tradicional</th><th>CFO Fracionado Humano</th><th>Software ERP/BI</th></tr>
+      <tr><td>Custo mensal</td><td>R$ 3–25k</td><td>R$ 5–15k</td><td>R$ 8–30k</td><td>R$ 500–5k</td></tr>
+      <tr><td>Previsão de caixa IA</td><td>✅ Nativo</td><td>❌</td><td>Parcial</td><td>Parcial</td></tr>
+      <tr><td>CFO Estratégico</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
+      <tr><td>Escalabilidade</td><td>Alta (IA)</td><td>Baixa</td><td>Muito baixa</td><td>Alta</td></tr>
+      <tr><td>Inteligência de negócio</td><td>Alta</td><td>Baixa</td><td>Alta</td><td>Média</td></tr>
+      <tr><td>Tempo de insight</td><td>Real-time</td><td>D+5</td><td>D+5</td><td>Real-time (sem interpretação)</td></tr>
+    </table>
+
+    <h3>Tese de Investimento</h3>
+    <p>A FinOps Intelligence é uma oportunidade de construir a primeira plataforma de CFO-IA nativa do Brasil em um mercado de R$ 7B+ SAM que está sendo reinventado pela convergência de Open Finance, LLMs e digitalização acelerada de PMEs. Com unit economics comprovados (LTV/CAC 8x+), modelo recorrente, moats de dados e um time fundador que combina expertise financeira profunda com capacidade de IA, a empresa está posicionada para ser a categoria dominante em gestão financeira para médias empresas na América Latina.</p>
+    <p>A janela de oportunidade é de 18–24 meses antes que players maiores (TOTVS, Conta Azul, Omie) acordem para este segmento ou que concorrentes com mais capital entrem. A estratégia é crescer rápido o suficiente para ter dados, marca e switching costs que tornem a posição defensável.</p>
+
+    <div class="critique">
+      <strong>Avaliação Crítica Final — Ciclo 11</strong>
+      O negócio está bem construído metodologicamente. Os riscos residuais mais relevantes: (1) <strong>Risco regulatório:</strong> CVM e BACEN podem eventualmente regular quem pode "dar conselhos financeiros" via IA — precisamos de compliance legal proativo; (2) <strong>Risco de commoditização:</strong> se os próprios bancos ou ERPs lançarem CFO-IA gratuito, o negócio é ameaçado — a defesa são dados proprietários e relação com CFO humano; (3) <strong>Risco de execução:</strong> encontrar CFOs seniores dispostos a trabalhar no modelo fracionado é difícil — a proposta de valor para eles precisa ser clara (autonomia, remuneração variável, flexibilidade).
+    </div>
+
+    <div class="improvement">
+      <strong>Mitigações Finais</strong>
+      (1) Comitê Legal &amp; Compliance desde M1 com especialista em regulação fintech. (2) Programa de CFO Partners: remuneração base R$ 10k + variável por NPS e expansão de conta = potencial R$ 25–40k/mês para CFO com 15-20 clientes. (3) Estratégia de "platform play": em Y3, abrir API para que ERPs usem os agentes FinOps — transformando concorrentes em parceiros distribuidores.
+    </div>
+
+  </div>
+</section>
+
+<!-- ROADMAP VISUAL RESUMIDO -->
+<section class="cycle">
+  <div class="cycle-header">
+    <div class="cycle-num">→</div>
+    <div>
+      <h2>Roadmap de Execução — 36 Meses</h2>
+      <div class="method">Da ideia ao negócio escalável e rentável</div>
+    </div>
+  </div>
+  <div class="cycle-body">
+    <table>
+      <tr><th>Marco</th><th>Mês</th><th>Status</th></tr>
+      <tr><td>Incorporação da empresa + equity split + vesting</td><td>M0</td><td><span class="badge badge-red">Imediato</span></td></tr>
+      <tr><td>MVP: agente tesoureiro + integração Open Finance + dashboard</td><td>M3</td><td><span class="badge badge-red">Urgente</span></td></tr>
+      <tr><td>3 clientes piloto pagantes</td><td>M3</td><td><span class="badge badge-red">Urgente</span></td></tr>
+      <tr><td>Fechamento da rodada Seed (R$ 5M)</td><td>M4</td><td><span class="badge badge-red">Crítico</span></td></tr>
+      <tr><td>20 clientes ativos + NPS &gt;50</td><td>M9</td><td><span class="badge badge-gold">Y1</span></td></tr>
+      <tr><td>Agentes Controller, AP/AR e Risco em produção</td><td>M9</td><td><span class="badge badge-gold">Y1</span></td></tr>
+      <tr><td>50 clientes + MRR R$ 160k</td><td>M12</td><td><span class="badge badge-gold">Y1</span></td></tr>
+      <tr><td>Série A (R$ 15M) fechada</td><td>M18</td><td><span class="badge badge-blue">Y2</span></td></tr>
+      <tr><td>200 clientes + ARR R$ 12M</td><td>M24</td><td><span class="badge badge-blue">Y2</span></td></tr>
+      <tr><td>Break-even operacional</td><td>M28</td><td><span class="badge badge-blue">Y2–Y3</span></td></tr>
+      <tr><td>Expansão México</td><td>M30</td><td><span class="badge badge-green">Y3</span></td></tr>
+      <tr><td>500 clientes + ARR R$ 33M + EBITDA 17%</td><td>M36</td><td><span class="badge badge-green">Y3</span></td></tr>
+      <tr><td>Série B (R$ 50M+) ou M&amp;A estratégico</td><td>M40–M48</td><td><span class="badge badge-green">Y4</span></td></tr>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer style="background:var(--brand); color:#a8c8f0; text-align:center; padding:2rem; font-size:0.82rem;">
+  <p>FinOps Intelligence · Plano de Negócio Iterativo · 11 Ciclos · Gerado em 2026-06-18</p>
+  <p style="margin-top:0.5rem; color:#7aafd4;">Metodologias: Kawasaki · Osterwalder · Christensen · Ulwick · Blank · Drucker · Senge · Deming · OKR · Multi-Agent IA</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kai Boyd · Silvia Kang">
+<meta name="theme-color" content="#060a0e">
+<title>Kai Boyd · Silvia Kang — Plano de Empregabilidade em Sustentabilidade</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap');
+
+:root {
+  --bg: #060a0e;
+  --surface: #0e1620;
+  --border: #243040;
+  --accent-blue: #38d4ff;
+  --accent-green: #2affb0;
+  --accent-yellow: #ffc830;
+  --accent-red: #ff7878;
+  --accent-dim: #0a2535;
+  --text: #e8f4fc;
+  --text-dim: #7a9ab0;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  min-height: 100vh;
+  padding-bottom: 48px;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.012) 2px, rgba(0,200,255,0.012) 4px);
+  pointer-events: none;
+  z-index: 100;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a2535, #001a28);
+  border: 1.5px solid var(--accent-blue);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 17px;
+  color: var(--accent-blue);
+  box-shadow: 0 0 16px rgba(56,212,255,0.35);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.avatar::after {
+  content: '';
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,200,255,0.15);
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 0; }
+}
+
+.header-info h1 {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 18px;
+  color: #fff; letter-spacing: 0.02em;
+}
+
+.header-info .subtitle {
+  font-size: 11px;
+  color: var(--accent-green);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.back-link {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 2px;
+  letter-spacing: 0.06em;
+  transition: all 0.2s;
+}
+.back-link:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+/* Hero */
+.hero {
+  padding: 40px 24px 28px;
+  border-bottom: 1px solid var(--border);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.profile-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a3520, #001a10);
+  border: 2px solid var(--accent-green);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 22px;
+  color: var(--accent-green);
+  box-shadow: 0 0 20px rgba(42,255,176,0.25);
+  flex-shrink: 0;
+}
+
+.profile-info h2 {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 26px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.profile-info .role {
+  font-size: 13px;
+  color: var(--accent-green);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.profile-info .desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  max-width: 560px;
+}
+
+.tags {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 2px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.tag-s  { background: rgba(42,255,176,0.12); color: var(--accent-green); border: 1px solid rgba(42,255,176,0.35); }
+.tag-e  { background: rgba(56,212,255,0.12); color: var(--accent-blue); border: 1px solid rgba(56,212,255,0.35); }
+.tag-g  { background: rgba(255,200,48,0.12); color: var(--accent-yellow); border: 1px solid rgba(255,200,48,0.35); }
+.tag-r  { background: rgba(255,120,120,0.12); color: var(--accent-red); border: 1px solid rgba(255,120,120,0.35); }
+
+/* Progress bar */
+.progress-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent-green);
+  padding: 20px 24px;
+  margin-bottom: 0;
+}
+
+.progress-label {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--text-dim);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+/* Main content */
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* Section headers */
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header .ooda-badge {
+  padding: 4px 12px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.badge-observe { background: rgba(56,212,255,0.18); color: #60ddff; border: 1px solid rgba(56,212,255,0.4); }
+.badge-orient  { background: rgba(255,190,0,0.15); color: var(--accent-yellow); border: 1px solid rgba(255,190,0,0.35); }
+.badge-decide  { background: rgba(255,90,90,0.15); color: var(--accent-red); border: 1px solid rgba(255,90,90,0.35); }
+.badge-act     { background: rgba(42,255,176,0.15); color: var(--accent-green); border: 1px solid rgba(42,255,176,0.35); }
+
+.section-header h3 {
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 18px;
+  color: #fff;
+}
+
+.section-header .phase-meta {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+
+/* Phase blocks */
+.phase {
+  margin-bottom: 40px;
+}
+
+/* Activity cards */
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.activity-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 18px 20px;
+  transition: border-color 0.2s;
+}
+
+.activity-card:hover { border-color: var(--accent-blue); }
+.activity-card.priority-high { border-left: 3px solid var(--accent-red); }
+.activity-card.priority-mid  { border-left: 3px solid var(--accent-yellow); }
+.activity-card.priority-low  { border-left: 3px solid var(--accent-green); }
+
+.card-top {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 10px;
+}
+
+.card-icon {
+  font-size: 18px; line-height: 1;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 14px;
+  color: #fff; line-height: 1.3;
+}
+
+.card-body {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.card-meta {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+
+.meta-chip {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 1px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+/* Timeline block */
+.timeline {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-blue);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+
+.timeline-title {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+  margin-bottom: 16px;
+}
+
+.timeline-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+
+.timeline-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  box-shadow: 0 0 6px var(--accent-blue);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.timeline-dot.green {
+  background: var(--accent-green);
+  box-shadow: 0 0 6px var(--accent-green);
+}
+
+.timeline-dot.yellow {
+  background: var(--accent-yellow);
+  box-shadow: 0 0 6px var(--accent-yellow);
+}
+
+.timeline-content strong {
+  font-size: 13px;
+  color: #fff;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.timeline-content span {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* KPI table */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent-green);
+  padding: 16px 18px;
+}
+
+.kpi-value {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 28px;
+  color: var(--accent-green);
+  margin-bottom: 4px;
+}
+
+.kpi-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+/* Quote block */
+.insight-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-yellow);
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+.insight-block strong { color: var(--accent-yellow); }
+
+/* Checklist */
+.checklist {
+  list-style: none;
+  margin-bottom: 24px;
+}
+
+.checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px;
+  color: var(--text-dim);
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(36,48,64,0.5);
+  line-height: 1.5;
+}
+
+.checklist li:last-child { border-bottom: none; }
+
+.check-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent-green);
+}
+
+.check-icon.pending { color: var(--text-dim); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .activity-grid { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .profile-block { flex-direction: column; gap: 14px; }
+  .profile-avatar { width: 52px; height: 52px; font-size: 18px; }
+  .hero { padding: 24px 16px 20px; }
+  .content { padding: 24px 16px; }
+  header { padding: 12px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="avatar">KB</div>
+  <div class="header-info">
+    <h1>KAI BOYD</h1>
+    <div class="subtitle">Assessoria Estratégica · Plano Pessoal</div>
+  </div>
+  <a href="index.html" class="back-link">← ASSESSOR</a>
+</header>
+
+<div style="max-width:900px; margin:0 auto;">
+  <div class="progress-section">
+    <div class="progress-label">
+      <span>PLANO DE EMPREGABILIDADE — SUSTENTABILIDADE</span>
+      <span>FASE 1 DE 4</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: 10%"></div>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="profile-block">
+    <div class="profile-avatar">SK</div>
+    <div class="profile-info">
+      <h2>Silvia Kang</h2>
+      <div class="role">Profissional em Transição → Sustentabilidade &amp; ESG</div>
+      <div class="desc">Plano estratégico estruturado no ciclo OODA + PDCA para desenvolver empregabilidade de alto nível na área de sustentabilidade, ESG e economia verde em 12 meses.</div>
+      <div class="tags">
+        <span class="tag tag-s">Sustentabilidade</span>
+        <span class="tag tag-e">ESG</span>
+        <span class="tag tag-g">Clima &amp; Energia</span>
+        <span class="tag tag-r">Economia Circular</span>
+        <span class="tag tag-s">GRI / B Corp</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- KPIs do Plano -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">12</div>
+      <div class="kpi-label">Meses de execução do plano</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">4</div>
+      <div class="kpi-label">Fases OODA estruturadas</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">3+</div>
+      <div class="kpi-label">Certificações estratégicas</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">50+</div>
+      <div class="kpi-label">Conexões de rede alvo</div>
+    </div>
+  </div>
+
+  <div class="insight-block">
+    <strong>◆ Contexto de mercado:</strong> O mercado de sustentabilidade no Brasil cresce acima de 20% ao ano. Empresas listadas na B3 são obrigadas a reportar ESG. Demanda por profissionais qualificados supera oferta em 3:1 — <strong>janela de oportunidade aberta agora.</strong>
+  </div>
+
+  <!-- FASE 1: OBSERVE -->
+  <div class="phase">
+    <div class="section-header">
+      <span class="ooda-badge badge-observe">OBSERVE</span>
+      <h3>Fase 1 — Diagnóstico &amp; Mapeamento</h3>
+      <div class="phase-meta">Meses 1–2<br><span style="color: var(--accent-blue)">Base de dados</span></div>
+    </div>
+
+    <div class="timeline" style="border-left-color: var(--accent-blue)">
+      <div class="timeline-title">⟶ OBJETIVO DA FASE</div>
+      <div style="font-size:14px; color: var(--text-dim); line-height:1.7;">
+        Mapear o mercado de sustentabilidade, identificar gaps de competências e definir o nicho de atuação prioritário. Sem diagnóstico preciso, a execução é dispersa.
+      </div>
+    </div>
+
+    <div class="activity-grid">
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">🔍</div>
+          <div class="card-title">Mapeamento de Vagas &amp; Cargos ESG</div>
+        </div>
+        <div class="card-body">Levantar 50+ vagas ativas em sustentabilidade no LinkedIn, Gupy e Indeed. Catalogar: cargos mais demandados, requisitos técnicos, faixas salariais e empresas contratantes. Criar planilha de inteligência de mercado.</div>
+        <div class="card-meta">
+          <span class="meta-chip">2 semanas</span>
+          <span class="meta-chip">alta prioridade</span>
+          <span class="meta-chip">gratuito</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">🪞</div>
+          <div class="card-title">Autodiagnóstico de Competências</div>
+        </div>
+        <div class="card-body">Mapear habilidades atuais versus as demandadas pelo mercado. Usar ferramentas: Skills Assessment do LinkedIn, frameworks GRI, análise de gap por nicho (Climate Tech, ESG Reporting, Economia Circular, Consultoria Ambiental).</div>
+        <div class="card-meta">
+          <span class="meta-chip">1 semana</span>
+          <span class="meta-chip">alta prioridade</span>
+          <span class="meta-chip">reflexivo</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">🎯</div>
+          <div class="card-title">Definição de Nicho Primário</div>
+        </div>
+        <div class="card-body">Escolher o nicho de entrada: (A) Analista ESG Corporativo, (B) Consultora Ambiental, (C) Climate Tech / Startups Verdes, (D) Terceiro Setor / ONGs. Usar matriz impacto × interesse × demanda de mercado.</div>
+        <div class="card-meta">
+          <span class="meta-chip">1 semana</span>
+          <span class="meta-chip">decisão crítica</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">🏢</div>
+          <div class="card-title">Lista de 20 Empresas-Alvo</div>
+        </div>
+        <div class="card-body">Pesquisar e listar 20 empresas ideais para trabalhar: líderes em sustentabilidade, certificadas B Corp, signatárias do Pacto Global ONU, startups Climate Tech e consultorias ambientais. Estudar posicionamento e cultura de cada uma.</div>
+        <div class="card-meta">
+          <span class="meta-chip">2 semanas</span>
+          <span class="meta-chip">prioridade média</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">💬</div>
+          <div class="card-title">Entrevistas de Informação (x5)</div>
+        </div>
+        <div class="card-body">Conduzir 5 conversas de 30 min com profissionais de sustentabilidade via LinkedIn. Perguntas: trajetória, skills mais valorizados, gaps que viram em candidatos, dicas de entrada. Objetivo: inteligência primária, não emprego direto.</div>
+        <div class="card-meta">
+          <span class="meta-chip">3 semanas</span>
+          <span class="meta-chip">rede</span>
+          <span class="meta-chip">gratuito</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-low">
+        <div class="card-top">
+          <div class="card-icon">📊</div>
+          <div class="card-title">Benchmark de Profissionais de Referência</div>
+        </div>
+        <div class="card-body">Identificar 10 profissionais de sustentabilidade admirados no LinkedIn. Analisar: formação, certificações, experiências, tipo de conteúdo publicado, engajamento. Extrair padrões replicáveis para o próprio posicionamento.</div>
+        <div class="card-meta">
+          <span class="meta-chip">1 semana</span>
+          <span class="meta-chip">baixa prioridade</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="insight-block">
+      <strong>▲ Risco desta fase:</strong> Análise-paralisia. O diagnóstico é ferramenta, não destino. Prazo máximo de 2 meses — depois, move-se para Orient mesmo que o mapa esteja incompleto.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FASE 2: ORIENT -->
+  <div class="phase">
+    <div class="section-header">
+      <span class="ooda-badge badge-orient">ORIENT</span>
+      <h3>Fase 2 — Formação &amp; Posicionamento</h3>
+      <div class="phase-meta">Meses 2–6<br><span style="color: var(--accent-yellow)">Construção</span></div>
+    </div>
+
+    <div class="timeline" style="border-left-color: var(--accent-yellow)">
+      <div class="timeline-title">⟶ OBJETIVO DA FASE</div>
+      <div style="font-size:14px; color: var(--text-dim); line-height:1.7;">
+        Construir as credenciais técnicas, a presença digital e a rede profissional que validam Silvia como especialista em sustentabilidade. Esta é a fase de maior investimento de tempo.
+      </div>
+    </div>
+
+    <div class="activity-grid">
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">📜</div>
+          <div class="card-title">Certificação GRI Standards</div>
+        </div>
+        <div class="card-body">Concluir o GRI Certified Course (online, ~$300 USD). É o padrão global de relatórios ESG — sinaliza credibilidade imediata. Prioridade #1 em certificações. Disponível em: GRI Academy.</div>
+        <div class="card-meta">
+          <span class="meta-chip">2–3 meses</span>
+          <span class="meta-chip">alta prioridade</span>
+          <span class="meta-chip">pago</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">🌱</div>
+          <div class="card-title">Curso de Fundamentos ESG</div>
+        </div>
+        <div class="card-body">Concluir curso de ESG com certificado reconhecido: CFA Institute (gratuito), FGV ESG, Sustainability Academy (UNEP FI), ou Coursera — University of Pennsylvania "ESG Investing". Foco em métricas, frameworks e aplicação prática.</div>
+        <div class="card-meta">
+          <span class="meta-chip">1–2 meses</span>
+          <span class="meta-chip">alta prioridade</span>
+          <span class="meta-chip">gratuito/pago</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">♻️</div>
+          <div class="card-title">Curso Economia Circular</div>
+        </div>
+        <div class="card-body">Completar "Circular Economy" da Ellen MacArthur Foundation (gratuito, certificado). Complementar com Coursera "Circular Economy - Sustainable Materials Management" — TU Delft. Habilidade diferencial crescente no Brasil.</div>
+        <div class="card-meta">
+          <span class="meta-chip">4–6 semanas</span>
+          <span class="meta-chip">alta prioridade</span>
+          <span class="meta-chip">gratuito</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">🌡️</div>
+          <div class="card-title">Curso de Mudanças Climáticas</div>
+        </div>
+        <div class="card-body">Completar "Climate Change: The Science and Global Impact" (edX, gratuito) ou "Our Earth: Its Climate, History, and Processes" (Coursera). Entender bases científicas é diferencial em entrevistas e discussions técnicas.</div>
+        <div class="card-meta">
+          <span class="meta-chip">4–6 semanas</span>
+          <span class="meta-chip">prioridade média</span>
+          <span class="meta-chip">gratuito</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">🔗</div>
+          <div class="card-title">LinkedIn — Otimização Completa</div>
+        </div>
+        <div class="card-body">Reescrever headline com keywords: "ESG | Sustentabilidade | Relatórios GRI". Atualizar About com proposta de valor clara. Adicionar seção de voluntariado e projetos ESG. Ativar Creator Mode. Meta: aparecer em buscas de recrutadores.</div>
+        <div class="card-meta">
+          <span class="meta-chip">1 semana</span>
+          <span class="meta-chip">prioridade média</span>
+          <span class="meta-chip">gratuito</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">✍️</div>
+          <div class="card-title">Produção de Conteúdo LinkedIn (1/semana)</div>
+        </div>
+        <div class="card-body">Publicar 1 post por semana sobre sustentabilidade: análise de notícias ESG, aprendizados de cursos, cases de empresas, reflexões sobre carreira verde. Objetivo: 200 seguidores qualificados em 3 meses. Consistência &gt; perfeição.</div>
+        <div class="card-meta">
+          <span class="meta-chip">ongoing</span>
+          <span class="meta-chip">prioridade média</span>
+          <span class="meta-chip">1h/semana</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">🤝</div>
+          <div class="card-title">Eventos e Comunidades de Sustentabilidade</div>
+        </div>
+        <div class="card-body">Participar de: ESG Summit Brasil, Fórum de Sustentabilidade FGV, eventos do Conselho Empresarial Brasileiro para o Desenvolvimento Sustentável (CEBDS), webinars da GRI, meetups de Climate Tech. Meta: 2 eventos/mês.</div>
+        <div class="card-meta">
+          <span class="meta-chip">ongoing</span>
+          <span class="meta-chip">prioridade média</span>
+          <span class="meta-chip">rede</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-low">
+        <div class="card-top">
+          <div class="card-icon">🌍</div>
+          <div class="card-title">Voluntariado em Projeto ESG</div>
+        </div>
+        <div class="card-body">Engajar em 1 projeto voluntário: apoiar pequena empresa a elaborar relatório de sustentabilidade, trabalhar com ONG ambiental, ou contribuir para projeto de impacto no Instituto Ethos / Rede ORSE. Gera portfólio real.</div>
+        <div class="card-meta">
+          <span class="meta-chip">3–4 meses</span>
+          <span class="meta-chip">portfólio</span>
+          <span class="meta-chip">diferencial</span>
+        </div>
+      </div>
+
+    </div>
+
+    <ul class="checklist">
+      <li><span class="check-icon pending">◇</span> GRI Standards Certificate concluído</li>
+      <li><span class="check-icon pending">◇</span> Certificação ESG Fundamentals concluída</li>
+      <li><span class="check-icon pending">◇</span> Ellen MacArthur Circular Economy concluído</li>
+      <li><span class="check-icon pending">◇</span> LinkedIn com All-Star Score ativo</li>
+      <li><span class="check-icon pending">◇</span> 12 posts publicados (3 meses × 1/semana)</li>
+      <li><span class="check-icon pending">◇</span> 50+ novas conexões em sustentabilidade</li>
+      <li><span class="check-icon pending">◇</span> 1 projeto voluntário ESG iniciado</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FASE 3: DECIDE -->
+  <div class="phase">
+    <div class="section-header">
+      <span class="ooda-badge badge-decide">DECIDE</span>
+      <h3>Fase 3 — Estratégia de Entrada no Mercado</h3>
+      <div class="phase-meta">Meses 6–8<br><span style="color: var(--accent-red)">Foco</span></div>
+    </div>
+
+    <div class="timeline" style="border-left-color: var(--accent-red)">
+      <div class="timeline-title">⟶ OBJETIVO DA FASE</div>
+      <div style="font-size:14px; color: var(--text-dim); line-height:1.7;">
+        Converter credenciais e rede em candidaturas de alto potencial. Criar materiais de candidatura que posicionem Silvia com proposta de valor diferenciada — não currículo genérico.
+      </div>
+    </div>
+
+    <div class="activity-grid">
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">📄</div>
+          <div class="card-title">Currículo ESG — Versão Especializada</div>
+        </div>
+        <div class="card-body">Reescrever currículo com foco em sustentabilidade: headline "Profissional ESG", quantificar impactos anteriores (mesmo de outras áreas), incluir certificações, listar projetos voluntários, alinhar keywords com vagas-alvo. 1 página, alta densidade.</div>
+        <div class="card-meta">
+          <span class="meta-chip">1 semana</span>
+          <span class="meta-chip">alta prioridade</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">🎤</div>
+          <div class="card-title">Pitch Pessoal — 60 e 120 Segundos</div>
+        </div>
+        <div class="card-body">Desenvolver e ensaiar pitch de transição de carreira: por que sustentabilidade, o que já construiu, o que oferece ao mercado. Estrutura: passado → decisão → construção → proposta de valor. Gravar e revisar 3 versões.</div>
+        <div class="card-meta">
+          <span class="meta-chip">1 semana</span>
+          <span class="meta-chip">alta prioridade</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">🗂️</div>
+          <div class="card-title">Portfólio de Projetos ESG</div>
+        </div>
+        <div class="card-body">Compilar 2–3 trabalhos concretos: (1) projeto voluntário concluído, (2) análise ESG de empresa pública, (3) plano de sustentabilidade fictício ou real. Formato PDF + LinkedIn Featured. Tangibiliza competências para recrutadores.</div>
+        <div class="card-meta">
+          <span class="meta-chip">2 semanas</span>
+          <span class="meta-chip">alta prioridade</span>
+          <span class="meta-chip">portfólio</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">🔎</div>
+          <div class="card-title">Candidaturas Direcionadas (não em massa)</div>
+        </div>
+        <div class="card-body">Candidatar para as 20 empresas-alvo mapeadas na Fase 1. Para cada empresa: personalizar carta, pesquisar projetos de sustentabilidade delas, referenciar no email. Qualidade sobre quantidade — 5 candidaturas bem feitas &gt; 50 disparadas.</div>
+        <div class="card-meta">
+          <span class="meta-chip">ongoing</span>
+          <span class="meta-chip">prioridade média</span>
+          <span class="meta-chip">2–3/semana</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">🕸️</div>
+          <div class="card-title">Candidaturas por Rede (hidden market)</div>
+        </div>
+        <div class="card-body">70% das vagas não são publicadas. Ativar rede construída: avisar conexões sobre busca ativa, pedir indicações diretas, contatar recrutadores de sustentabilidade no LinkedIn (mensagem personalizada, não template). Meta: 5 conversas/mês via rede.</div>
+        <div class="card-meta">
+          <span class="meta-chip">ongoing</span>
+          <span class="meta-chip">prioridade média</span>
+          <span class="meta-chip">rede</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">🧠</div>
+          <div class="card-title">Preparação para Entrevistas ESG</div>
+        </div>
+        <div class="card-body">Estudar: perguntas comuns de entrevistas em sustentabilidade, cases ESG, como empresas medem impacto. Praticar método STAR (Situação, Tarefa, Ação, Resultado) com 10 histórias concretas. Simular 2 entrevistas com pessoas da área.</div>
+        <div class="card-meta">
+          <span class="meta-chip">2 semanas</span>
+          <span class="meta-chip">prioridade média</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FASE 4: ACT -->
+  <div class="phase">
+    <div class="section-header">
+      <span class="ooda-badge badge-act">ACT</span>
+      <h3>Fase 4 — Execução, Negociação &amp; Ciclo Contínuo</h3>
+      <div class="phase-meta">Meses 8–12<br><span style="color: var(--accent-green)">Resultados</span></div>
+    </div>
+
+    <div class="timeline" style="border-left-color: var(--accent-green)">
+      <div class="timeline-title">⟶ OBJETIVO DA FASE</div>
+      <div style="font-size:14px; color: var(--text-dim); line-height:1.7;">
+        Converter entrevistas em ofertas. Negociar com inteligência. Após a entrada, posicionar-se para crescimento acelerado nos primeiros 90 dias. O ciclo OODA não para — começa de novo a cada trimestre.
+      </div>
+    </div>
+
+    <div class="activity-grid">
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">⚖️</div>
+          <div class="card-title">Negociação Salarial — Preparação</div>
+        </div>
+        <div class="card-body">Pesquisar faixas salariais reais: Glassdoor, Gupy Salary, Linkedin Salary Insights, conversar com profissionais da área. Conhecer o mercado evita subvalorização. Para primeiro emprego em ESG: foco em aprendizado + crescimento vs. salário máximo imediato.</div>
+        <div class="card-meta">
+          <span class="meta-chip">antes de ofertas</span>
+          <span class="meta-chip">alta prioridade</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-high">
+        <div class="card-top">
+          <div class="card-icon">🚀</div>
+          <div class="card-title">Plano 30-60-90 Dias (pós-contratação)</div>
+        </div>
+        <div class="card-body">Elaborar plano de primeiros 90 dias antes mesmo de começar: 30d para entender a empresa, 60d para entregar primeiro resultado tangível, 90d para propor melhoria na área de sustentabilidade. Apresentar ao gestor — demonstra proatividade estratégica.</div>
+        <div class="card-meta">
+          <span class="meta-chip">no onboarding</span>
+          <span class="meta-chip">diferencial</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">📈</div>
+          <div class="card-title">Atualização de Certificações (ciclo anual)</div>
+        </div>
+        <div class="card-body">Após entrada: planejar próximo nível de certificação. Candidatos: ISO 14001 Lead Auditor, LEED Green Associate, CDP Accreditation, SASB FSA Credential, ou MBA em Gestão da Sustentabilidade. Mercado ESG evolui — quem para, regride.</div>
+        <div class="card-meta">
+          <span class="meta-chip">ano 2+</span>
+          <span class="meta-chip">crescimento</span>
+        </div>
+      </div>
+
+      <div class="activity-card priority-mid">
+        <div class="card-top">
+          <div class="card-icon">🔄</div>
+          <div class="card-title">Revisão Trimestral PDCA</div>
+        </div>
+        <div class="card-body">A cada 3 meses: rever métricas (candidaturas, respostas, entrevistas, ofertas), ajustar estratégia, identificar o que está funcionando. Usar o Kai Boyd em modo Estratégico para ciclos OODA de carreira. Plano vivo, não documento estático.</div>
+        <div class="card-meta">
+          <span class="meta-chip">trimestral</span>
+          <span class="meta-chip">PDCA</span>
+          <span class="meta-chip">ongoing</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Timeline Resumo -->
+  <div class="section-header">
+    <span class="ooda-badge badge-observe">TIMELINE</span>
+    <h3>Cronograma Consolidado — 12 Meses</h3>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-title">ROADMAP VISUAL</div>
+
+    <div class="timeline-row">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <strong>Meses 1–2 · OBSERVE — Diagnóstico</strong>
+        <span>Mapeamento de vagas, autodiagnóstico, definição de nicho, lista de empresas-alvo, 5 entrevistas de informação</span>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-dot yellow"></div>
+      <div class="timeline-content">
+        <strong>Meses 2–4 · ORIENT (parte 1) — Formação Técnica</strong>
+        <span>GRI Standards, ESG Fundamentals, Economia Circular (Ellen MacArthur), Mudanças Climáticas</span>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-dot yellow"></div>
+      <div class="timeline-content">
+        <strong>Meses 3–6 · ORIENT (parte 2) — Rede &amp; Presença Digital</strong>
+        <span>LinkedIn otimizado, 1 post/semana, 2 eventos/mês, voluntariado ESG iniciado, 50+ conexões qualificadas</span>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-dot" style="background: var(--accent-red); box-shadow: 0 0 6px var(--accent-red)"></div>
+      <div class="timeline-content">
+        <strong>Meses 6–8 · DECIDE — Candidaturas Estratégicas</strong>
+        <span>Currículo ESG, portfólio, pitch pessoal, candidaturas direcionadas, ativação de rede para hidden market</span>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-dot green"></div>
+      <div class="timeline-content">
+        <strong>Meses 8–12 · ACT — Negociação &amp; Entrada</strong>
+        <span>Converter entrevistas em ofertas, negociar com inteligência, executar plano 30-60-90 dias, ciclo PDCA contínuo</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Próximo Ciclo -->
+  <div class="insight-block" style="border-left-color: var(--accent-green)">
+    <strong style="color: var(--accent-green)">✓ PRÓXIMO CICLO — Ação imediata esta semana:</strong><br><br>
+    ⟶ <strong>Hoje:</strong> Abrir o LinkedIn e iniciar busca por vagas em sustentabilidade — catalogar 10 oportunidades.<br>
+    ⟶ <strong>Esta semana:</strong> Fazer o assessment de competências e escolher o nicho prioritário.<br>
+    ⟶ <strong>Este mês:</strong> Iniciar o curso GRI e fazer as primeiras 3 conexões estratégicas no LinkedIn.<br><br>
+    O maior risco não é o mercado — é a inação. Um ciclo OODA iniciado hoje vale mais do que um plano perfeito nunca executado.
+  </div>
+
+</div>
+
+</body>
+</html>
